@@ -1,0 +1,21 @@
+vite.config.ts
+# Ignore artifacts:
+build
+dist
+coverage
+
+# Ignore all HTML files:
+*.html
+
+node_modules
+tsconfig.json
+
+generated
+
+postcss.config.js
+tailwind.config.js
+package.json
+pnpm-lock.yaml
+tsconfig.node.json
+components.json
+jest.config.ts
