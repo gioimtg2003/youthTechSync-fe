@@ -76,7 +76,7 @@ export function createAxiosClient({
         throw new Error(response?.data?.message);
       }
 
-      return response?.data;
+      return response?.data?.data;
     },
     (error) => {
       const status = error?.response?.status;

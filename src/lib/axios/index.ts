@@ -1,0 +1,1 @@
+export { axiosInstant } from './axiosClient';
