@@ -1,17 +1,24 @@
 import QueryProvider from '@/providers/query.provider';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Pacifico } from 'next/font/google';
+import localFont from 'next/font/local';
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
-
-const geistSans = Geist({
+const geistSans = localFont({
+  src: './fonts/GeistVF.woff',
   variable: '--font-geist-sans',
-  subsets: ['latin'],
+  weight: '100 900',
+});
+const geistMono = localFont({
+  src: './fonts/GeistMonoVF.woff',
+  variable: '--font-geist-mono',
+  weight: '100 900',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+const pacifico = Pacifico({
+  subsets: ['vietnamese'],
+  weight: ['400'],
+  variable: '--font-pacifico',
 });
 
 export const metadata: Metadata = {
@@ -27,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${pacifico.variable} antialiased`}
       >
         <Toaster />
         <QueryProvider>{children}</QueryProvider>
