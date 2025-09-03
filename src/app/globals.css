@@ -6,6 +6,10 @@
 @utility font-pacifico {
   font-family: var(--font-pacifico);
 }
+@utility font-sfpro {
+  font-family: var(--font-sfpro);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -44,6 +48,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --font-sfpro: var(--font-sfpro);
 }
 
 :root {

@@ -4,15 +4,57 @@ import { Pacifico } from 'next/font/google';
 import localFont from 'next/font/local';
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-});
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900',
+
+const sfProDisplay = localFont({
+  src: [
+    {
+      path: './fonts/SFPRODISPLAYREGULAR.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './fonts/SFPRODISPLAYULTRALIGHTITALIC.woff2',
+      weight: '100',
+      style: 'italic',
+    },
+    {
+      path: './fonts/SFPRODISPLAYTHINITALIC.woff2',
+      weight: '200',
+      style: 'italic',
+    },
+    {
+      path: './fonts/SFPRODISPLAYLIGHTITALIC.woff2',
+      weight: '300',
+      style: 'italic',
+    },
+    {
+      path: './fonts/SFPRODISPLAYMEDIUM.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: './fonts/SFPRODISPLAYSEMIBOLDITALIC.woff2',
+      weight: '600',
+      style: 'italic',
+    },
+    {
+      path: './fonts/SFPRODISPLAYBOLD.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: './fonts/SFPRODISPLAYHEAVYITALIC.woff2',
+      weight: '800',
+      style: 'italic',
+    },
+    {
+      path: './fonts/SFPRODISPLAYBLACKITALIC.woff2',
+      weight: '900',
+      style: 'italic',
+    },
+  ],
+  variable: '--font-sfpro',
+  display: 'swap',
 });
 
 const pacifico = Pacifico({
@@ -34,7 +76,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${pacifico.variable} antialiased`}
+        className={`${sfProDisplay.variable} ${pacifico.variable} antialiased`}
       >
         <Toaster />
         <QueryProvider>{children}</QueryProvider>
