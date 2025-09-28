@@ -1,4 +1,4 @@
-import { AUTH_ERROR_CODE, JWT_ERROR_CODE, RoutesMap } from '@/constants';
+import { JWT_ERROR_CODE, RoutesMap } from '@/constants';
 import axios, { CreateAxiosDefaults, InternalAxiosRequestConfig } from 'axios';
 import dayjs from 'dayjs';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
@@ -76,7 +76,7 @@ export function createAxiosClient({
         throw new Error(response?.data?.message);
       }
 
-      return response?.data?.data;
+      return response?.data;
     },
     (error) => {
       const status = error?.response?.status;
@@ -172,7 +172,6 @@ export function createAxiosClient({
       if (
         error.response?.status === 401 &&
         error.response?.data?.code === JWT_ERROR_CODE.TokenExpiredError &&
-        error.response?.data?.code === AUTH_ERROR_CODE.Unauthorized &&
         error.config?.url === refreshTokenUrl &&
         error.response?.data?.code === JWT_ERROR_CODE.RefreshTokenNotMatching
       ) {

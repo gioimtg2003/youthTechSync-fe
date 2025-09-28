@@ -6,11 +6,14 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import NavUser from './NavUser';
+import TeamSwitcher from './TeamSwitcher';
 
 export default function AppSideBar() {
   return (
     <Sidebar collapsible='icon'>
-      <SidebarHeader>Header</SidebarHeader>
+      <SidebarHeader>
+        <TeamSwitcher />
+      </SidebarHeader>
       <SidebarContent></SidebarContent>
       <SidebarFooter>
         <NavUser />

@@ -1,1 +1,1 @@
-export default '/auth';
+export default '/user-auth';

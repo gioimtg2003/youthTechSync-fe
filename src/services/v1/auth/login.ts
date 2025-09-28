@@ -8,10 +8,7 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-}
+export interface LoginResponse {}
 
 const LOGIN_API_URL = `${endpoint}/login`;
 const getMutationKey = (params?: Record<string, unknown>) => [
@@ -20,9 +17,7 @@ const getMutationKey = (params?: Record<string, unknown>) => [
 ];
 
 const login = async (params: LoginRequest) => {
-  return axiosInstant.post<LoginRequest, LoginResponse>(LOGIN_API_URL, params, {
-    authorization: false,
-  } as any);
+  return axiosInstant.post<LoginRequest, LoginResponse>(LOGIN_API_URL, params);
 };
 
 export const useLogin = (
