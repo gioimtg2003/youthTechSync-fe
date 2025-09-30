@@ -5,7 +5,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar';
-import { NavProjects } from './NavAdminSetting';
+import { NavSettings } from './NavAdminSetting';
 import NavUser from './NavUser';
 import TeamSwitcher from './TeamSwitcher';
 
@@ -16,7 +16,7 @@ export default function AppSideBar() {
         <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects projects={[]} />
+        <NavSettings />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
