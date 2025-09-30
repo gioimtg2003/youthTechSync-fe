@@ -1,6 +1,12 @@
+import { UserPlan } from '@/constants';
+
 export interface IUser {
-  id: string;
+  id: number;
+  name?: string;
+  username: string;
   email: string;
-  name: string;
   avatar?: string;
+  currentTeamId?: number;
+  plan?: UserPlan;
+  teams?: { id: number; name: string; alias?: string }[];
 }

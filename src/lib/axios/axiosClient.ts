@@ -31,6 +31,7 @@ export const axiosInstant = createAxiosClient({
   options: {
     baseURL: BASE_URL,
     timeout: 15000,
+    withCredentials: true,
     headers: {
       'Content-Type': 'application/json',
     },
