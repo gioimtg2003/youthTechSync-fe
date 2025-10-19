@@ -1,5 +1,3 @@
-'use client';
-
 import { Ellipsis, SlidersVertical, Users } from 'lucide-react';
 
 import {
