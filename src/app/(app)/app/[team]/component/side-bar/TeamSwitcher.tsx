@@ -2,6 +2,7 @@
 
 import { ChevronsUpDown, Plus } from 'lucide-react';
 
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,29 +18,18 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { isDeepEqualReact } from '@/utils';
-import { memo, useState } from 'react';
-const teams = [
-  {
-    name: 'Team 1',
-    logo: () => <div>Logo 1</div>,
-    plan: 'Pro',
-  },
-  {
-    name: 'Team 2',
-    logo: () => <div>Logo 2</div>,
-    plan: 'Basic',
-  },
-];
+import { useGetTeam } from '@/services/v1/team/get';
+import { genKey, isDeepEqualReact } from '@/utils';
+import { genBase64Avatar } from '@/utils/image';
+import { memo } from 'react';
 
 const TeamSwitcher = () => {
+  const { data } = useGetTeam({
+    params: {},
+  });
   const { isMobile } = useSidebar();
 
-  const [activeTeam, setActiveTeam] = useState(teams[0]);
-
-  if (!activeTeam) {
-    return null;
-  }
+  // const [activeTeam, setActiveTeam] = useState([]);
 
   return (
     <SidebarMenu>
@@ -50,12 +40,18 @@ const TeamSwitcher = () => {
               size='lg'
               className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
             >
-              <div className='bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg'>
-                {/* <activeTeam.logo className='size-4' /> */}
-              </div>
+              <Avatar>
+                <AvatarImage
+                  src={genBase64Avatar(
+                    { name: data?.[0]?.name ?? '', email: '' },
+                    { size: 'small' }
+                  )}
+                  alt={data?.[0]?.name}
+                />
+              </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
-                <span className='truncate font-medium'>{activeTeam.name}</span>
-                <span className='truncate text-xs'>{activeTeam.plan}</span>
+                <span className='truncate font-medium'>{data?.[0]?.name}</span>
+                <span className='truncate text-xs'>{'Pro'}</span>
               </div>
               <ChevronsUpDown className='ml-auto' />
             </SidebarMenuButton>
@@ -69,15 +65,21 @@ const TeamSwitcher = () => {
             <DropdownMenuLabel className='text-muted-foreground text-xs'>
               Teams
             </DropdownMenuLabel>
-            {teams.map((team, index) => (
+            {(data ?? [])?.map((team, index) => (
               <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className='gap-2 p-2'
+                key={genKey('team-switcher', team.id)}
+                // onClick={() => setActiveTeam(team)}
+                className='gap-2 p-2 cursor-pointer'
               >
-                <div className='flex size-6 items-center justify-center rounded-md border'>
-                  {/* <team.logo className='size-3.5 shrink-0' /> */}
-                </div>
+                <Avatar>
+                  <AvatarImage
+                    src={genBase64Avatar(
+                      { name: team.name, email: '' },
+                      { size: 'small' }
+                    )}
+                    alt={team.name}
+                  />
+                </Avatar>
                 {team.name}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
