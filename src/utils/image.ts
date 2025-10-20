@@ -18,6 +18,8 @@ export function genBase64Avatar(
     size?: 'default' | 'small' | 'large';
   }
 ) {
+  if (typeof window === 'undefined') return '';
+
   const { name, isUpperCaseFirst = true } = data;
   const {
     textSize = 100,

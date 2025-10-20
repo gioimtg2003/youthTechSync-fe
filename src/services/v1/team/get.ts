@@ -13,15 +13,15 @@ export interface GetTeamResponse {
 
 export interface GetTeamRequest {}
 
-const ENDPOINT = `${endpoint}/`;
+export const ENDPOINT_GET_TEAM = `${endpoint}`;
 
 export const getQueryKey = (params?: Record<string, unknown>) => [
-  ENDPOINT,
+  ENDPOINT_GET_TEAM,
   params,
 ];
 
 const getTeam = async () => {
-  return axiosInstant.get<GetTeamRequest, GetTeamResponse[]>(ENDPOINT);
+  return axiosInstant.get<GetTeamRequest, GetTeamResponse[]>(ENDPOINT_GET_TEAM);
 };
 
 export const useGetTeam = (
