@@ -49,7 +49,6 @@ function extractSubdomain(request: NextRequest): string | null {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  console.log('🚀 ~ middleware ~ pathname:', pathname);
   const subdomain = extractSubdomain(request);
 
   if (subdomain) {

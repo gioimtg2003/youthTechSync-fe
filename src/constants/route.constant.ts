@@ -3,9 +3,10 @@ export const RoutesMap = {
     SIGN_IN: '/login',
   },
   CORE_ROUTES_SETTING: {
-    GENERAL: '/app/general',
-    USER: '/app/users',
-    OTHER: '/app/other',
+    GENERAL: '/general',
+    USER: '/users',
+    OTHER: '/other',
+    PERMISSION: '/permission',
   },
 };
 

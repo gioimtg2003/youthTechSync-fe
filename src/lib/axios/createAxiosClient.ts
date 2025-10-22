@@ -72,7 +72,6 @@ export function createAxiosClient({
       // Any status code that lie within the range of 2xx cause this function to trigger
       // Do something with response data
       const success = response?.status >= 200 && response?.status <= 399;
-      console.log('🚀 ~ createAxiosClient ~ success:', response?.status);
       if (!success) {
         throw new Error(response?.data?.message);
       }
