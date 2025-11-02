@@ -4,6 +4,7 @@ export interface IDisclosureControls<T = any> {
   isOpen: boolean;
   open: (data?: T) => void;
   close: () => void;
+  onChange: (open: boolean) => void;
   data: T | null | undefined;
 }
 
@@ -27,10 +28,18 @@ export function useDisclosure<T = any>(
     }
   };
 
+  const onChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open && props?.deleteDataAfterClose) {
+      setData(undefined);
+    }
+  };
+
   return {
     isOpen,
     open,
     close,
+    onChange,
     data,
   };
 }

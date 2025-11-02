@@ -1,11 +1,13 @@
 import { Input, InputProps } from '@/components/ui/input';
-import { BaseForm, IControlledFormProps } from './base-form';
+import { isDeepEqualReact } from '@/utils';
+import { memo } from 'react';
+import BaseForm, { IControlledFormProps } from './base-form';
 
-interface InputFormProps extends InputProps, IControlledFormProps {
-  name: string;
-}
+interface InputFormProps
+  extends Omit<InputProps, 'name'>,
+    IControlledFormProps {}
 
-export const InputForm = (props: InputFormProps) => {
+const InputForm = (props: InputFormProps) => {
   const { control, label, description, name, optional, ...rest } = props;
 
   return (
@@ -19,3 +21,6 @@ export const InputForm = (props: InputFormProps) => {
     />
   );
 };
+
+InputForm.displayName = 'InputForm';
+export default memo(InputForm, isDeepEqualReact);

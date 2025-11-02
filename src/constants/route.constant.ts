@@ -17,3 +17,10 @@ export const CORE_ROUTES_SETTING_METADATA = Object.entries(
   value: key,
   href: value,
 }));
+
+export const SETTING_ROUTE_KEYS = {
+  GENERAL: 'GENERAL',
+  USER: 'USER', 
+  ROLES: 'ROLES',
+  OTHER: 'OTHER',
+};

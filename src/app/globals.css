@@ -135,3 +135,40 @@ html,
 body {
   font-family: var(--font-sfpro), sans-serif;
 }
+
+@layer utilities {
+  .scrollbar-form-role-action::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  .scrollbar-form-role-action::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #cbcbcb;
+  }
+
+  .scrollbar-form-role-action::-webkit-scrollbar-thumb {
+    background: #aeaeae;
+    border-radius: 100vh;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #c0a0b9;
+  }
+}
+
+.animation-floating {
+  --duration: 1.5s;
+
+  animation: floating var(--duration) ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}

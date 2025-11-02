@@ -12,7 +12,7 @@ import {
 import { useCreateTeam } from '@/services/v1/team/create';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { InputForm } from '@/components/common';
+import InputForm from '@/components/common/form/input-form';
 import { Button } from '@/components/ui/button';
 import { getQueryClient } from '@/providers/query.provider';
 import { ENDPOINT_GET_TEAM } from '@/services/v1/team/get';
@@ -70,10 +70,7 @@ export const FormCreateTeam = (props: DialogProps) => {
           </DialogClose>
           <Button
             loading={isPending}
-            onClick={() => {
-              console.log('🚀 ~ submitCreateTeam ~ data:', methods.getValues());
-              methods.handleSubmit(submitCreateTeam)();
-            }}
+            onClick={methods.handleSubmit(submitCreateTeam)}
           >
             Save changes
           </Button>

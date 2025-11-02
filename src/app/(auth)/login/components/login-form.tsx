@@ -1,6 +1,6 @@
 'use client';
 
-import { InputForm } from '@/components/common';
+import InputForm from '@/components/common/form/input-form';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -33,7 +33,6 @@ export function LoginForm({
   });
 
   const submitLogin = (data: TLoginSchema) => {
-    console.log('🚀 ~ submitLogin ~ data:', data);
     mutate(data);
   };
 

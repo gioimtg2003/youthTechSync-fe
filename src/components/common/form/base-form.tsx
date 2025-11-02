@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+import { isDeepEqualReact } from '@/utils';
+import { memo, ReactNode } from 'react';
 import {
   Control,
   Controller,
@@ -21,7 +22,7 @@ export interface IBaseFormProps extends IControlledFormProps {
   render: (field: ControllerRenderProps<FieldValues, string>) => ReactNode;
 }
 
-export const BaseForm = (props: IBaseFormProps) => {
+const BaseForm = (props: IBaseFormProps) => {
   const { control, label, description, name, optional, containerClassName } =
     props;
   // const formTrans = useFormTranslation();
@@ -64,3 +65,7 @@ export const BaseForm = (props: IBaseFormProps) => {
     />
   );
 };
+
+BaseForm.displayName = 'BaseForm';
+
+export default memo(BaseForm, isDeepEqualReact);
