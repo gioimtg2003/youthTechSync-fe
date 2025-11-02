@@ -28,16 +28,5 @@ const RoleSchema = z.object({
     .nonempty('At least one resource must be selected'),
 });
 
-const ActionsSchema = z.array(
-  z.object({
-    action: z.string(),
-    resource: z.string(),
-    scope: z.string().optional(),
-  })
-);
-
-export type TActionsSchema = z.infer<typeof ActionsSchema>;
-export { ActionsSchema };
-
 export type TRoleSchema = z.infer<typeof RoleSchema>;
 export default RoleSchema;

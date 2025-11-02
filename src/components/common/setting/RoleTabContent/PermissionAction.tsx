@@ -94,7 +94,7 @@ const PermissionAction = (props: PermissionActionProps) => {
             ACTION_PERMISSION_ICON_MAPPING[f.action as ActionPermission];
           return (
             <div
-              key={genKey('permission', resourceId, 'action', f?.id, f?.action)}
+              key={f?.id}
               className={cn(
                 'flex items-center justify-between w-full',
                 f.action === ActionPermission.create && 'justify-start'
