@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useDisclosure } from '@/hooks';
 import { isDeepEqualReact } from '@/utils';
 import { Plus } from 'lucide-react';
@@ -10,7 +11,11 @@ const RoleTabContent = () => {
 
   return (
     <>
-      <FormActionRole open={isOpen} onChange={onChange} />
+      <Dialog open={isOpen} onOpenChange={onChange}>
+        <DialogContent className='p-0 overflow-hidden'>
+          <FormActionRole open={isOpen} />
+        </DialogContent>
+      </Dialog>
       <div className='w-full flex justify-between items-center mb-4'>
         <h2 className='text-lg font-medium font-sfpro'>Roles Management</h2>
         <Button

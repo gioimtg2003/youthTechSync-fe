@@ -2,6 +2,7 @@ import {
   ACTION_PERMISSION_ICON_MAPPING,
   ACTION_PERMISSION_LABEL_MAPPING,
   ActionPermission,
+  SYSTEM_RESOURCE,
 } from '@/constants';
 import { cn } from '@/lib/utils';
 import { genKey, isDeepEqualReact } from '@/utils';
@@ -15,9 +16,10 @@ export interface PermissionActionProps {
   resourceId: string;
   methods: UseFormReturn<any>;
   actions: ActionPermission[];
+  resource: string;
 }
 const PermissionAction = (props: PermissionActionProps) => {
-  const { methods, resourceId, actions } = props;
+  const { methods, resourceId, actions, resource } = props;
   const {
     fields: actionFields,
     append: appendAction,
@@ -108,12 +110,13 @@ const PermissionAction = (props: PermissionActionProps) => {
                   }
                 </span>
               </div>
-              {f?.action !== ActionPermission.create && (
-                <ScopeActionItem
-                  name={`permissions.${resourceId}.actions.${f.id}.scope`}
-                  control={methods.control}
-                />
-              )}
+              {f?.action !== ActionPermission.create &&
+                resource !== SYSTEM_RESOURCE.all && (
+                  <ScopeActionItem
+                    name={`permissions.${resourceId}.actions.${f.id}.scope`}
+                    control={methods.control}
+                  />
+                )}
             </div>
           );
         })}

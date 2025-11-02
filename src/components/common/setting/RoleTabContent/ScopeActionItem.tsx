@@ -13,7 +13,7 @@ const ScopeActionItem = (props: ScopeActionItemProps) => {
     <AntdSelectForm
       control={control}
       name={name}
-      placeholder='Select resource'
+      placeholder='Select scope'
       containerClassName='max-w-[156px]'
       options={[]}
       maxTagCount={'responsive'}
