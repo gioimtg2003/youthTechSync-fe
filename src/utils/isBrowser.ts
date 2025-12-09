@@ -1,8 +1,3 @@
-const isNode =
-  typeof process !== 'undefined' &&
-  process.versions != null &&
-  process.versions.node != null;
-
 /**
  *
  * @returns  boolean
@@ -15,6 +10,6 @@ export const isBrowser = () => {
     typeof window !== 'undefined' &&
     typeof window.document !== 'undefined' &&
     typeof window.matchMedia !== 'undefined' &&
-    !isNode
+    typeof process === 'undefined'
   );
 };

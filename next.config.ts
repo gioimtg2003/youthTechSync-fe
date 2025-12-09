@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     
   ],
   async rewrites() {
-    const destinationUrl = API_URL || 'http://localhost:3000';
+    const destinationUrl = API_URL || 'http://localhost:3000/';
     return [
       {
         source: '/api/v1/:path*',
