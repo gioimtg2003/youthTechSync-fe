@@ -2,16 +2,15 @@ name: CI Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main, dev, release.*]
   pull_request:
-    branches:
-      - '*'
+    branches: [main, dev, release.*]
 
 jobs:
-  verify:
+  lint:
+    name: Lint Code
     runs-on: ubuntu-latest
-
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v4
@@ -20,12 +19,73 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: 'pnpm'
-
       - name: Install dependencies
         run: pnpm install
-
-      - name: Lint
+      - name: Lint code
         run: pnpm lint
 
-      - name: Build
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v4
+      - name: Use Node.js from .nvmrc
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run tests
+        run: pnpm test --run
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v4
+      - name: Use Node.js from .nvmrc
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build application
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
         run: pnpm run build
+
+  notify:
+    name: Telegram Notification
+    runs-on: ubuntu-latest
+    needs: [lint, test, build]
+    if: always()
+    steps:
+      - name: Send Telegram Notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            Build Status: *${{ needs.build.result }}*
+
+            🎬 **Job:** ${{ github.workflow }}
+            Repository: [${{ github.repository }}](https://github.com/${{ github.repository }})
+            Branch: `${{ github.ref_name }}`
+            Commit: `${{ github.event.head_commit.message }}`
+            Author: ${{ github.event.head_commit.author.name }}
+            Time: ${{ github.event.head_commit.author.date }}
+
+            Details:
+            - Lint: ${{ needs.lint.result }}
+            - Test: ${{ needs.test.result }}
+            - Build: ${{ needs.build.result }}
+
+            [View detail](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})

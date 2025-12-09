@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: [
@@ -8,10 +9,11 @@ const nextConfig: NextConfig = {
     
   ],
   async rewrites() {
+    const destinationUrl = API_URL || 'http://localhost:3000';
     return [
       {
         source: '/api/v1/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL}:path*`,
+        destination: `${destinationUrl}:path*`,
       },
     ];
   },
