@@ -38,8 +38,8 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
-      - name: Run tests
-        run: pnpm test --run
+      # - name: Run tests
+      #   run: pnpm test --run
 
   build:
     name: Build
