@@ -6,6 +6,11 @@ const RoleSchema = z.object({
     .min(4, 'Role name must be at least 4 characters long')
     .max(50, 'Role name must be at most 50 characters long'),
 
+  description: z
+    .string()
+    .max(200, 'Role description must be at most 200 characters long')
+    .optional(),
+
   permissions: z.array(
     z.object({
       actions: z.array(

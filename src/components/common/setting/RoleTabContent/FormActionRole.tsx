@@ -7,6 +7,10 @@ import { Form } from '@/components/ui/form';
 import { SYSTEM_RESOURCE, SYSTEM_RESOURCE_LABEL_MAPPING } from '@/constants';
 import { cn } from '@/lib/utils';
 import { useGetPolicy } from '@/services/v1/policy';
+import {
+  CreateRoleRequest,
+  useMutationCreateRole,
+} from '@/services/v1/role/create';
 import { isDeepEqualReact } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { memo } from 'react';
@@ -17,18 +21,29 @@ import PermissionAction from './PermissionAction';
 import { TRoleSchema } from './zod';
 import RoleSchema from './zod/role-schema.zod';
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Button as AntdButton } from 'antd';
 export interface FormActionRoleProps {
   open: boolean;
+  onChange: (open: boolean) => void;
 }
 
-const FormActionRole = ({ open }: FormActionRoleProps) => {
+const FormActionRole = ({ open, onChange }: FormActionRoleProps) => {
   const { data: dataPolicy } = useGetPolicy({ params: {}, enabled: open });
+  const { mutate: createRole, isPending: isLoadingCreateRole } =
+    useMutationCreateRole({});
 
   const methods = useForm<TRoleSchema>({
     resolver: zodResolver(RoleSchema),
     mode: 'onSubmit',
     defaultValues: {
       name: '',
+      description: '',
       resources: [],
       permissions: [],
     },
@@ -55,7 +70,20 @@ const FormActionRole = ({ open }: FormActionRoleProps) => {
     <div className='max-w-3xl max-h-[515px] overflow-auto p-6 scrollbar-form-role-action'>
       <form
         onSubmit={methods.handleSubmit((data) => {
-          console.log('🚀 ~ data:', data);
+          createRole(
+            {
+              name: data.name,
+              description: data?.description,
+              permissions: (data?.permissions ??
+                []) as CreateRoleRequest['permissions'],
+            },
+            {
+              onSuccess: () => {
+                methods.reset();
+                onChange(false);
+              },
+            }
+          );
         })}
       >
         <Form {...methods}>
@@ -67,6 +95,13 @@ const FormActionRole = ({ open }: FormActionRoleProps) => {
             name='name'
             label='Role Name'
             placeholder='Enter role name'
+            className='mb-4'
+          />
+          <InputForm
+            control={methods.control}
+            name='description'
+            label='Role Description'
+            placeholder='Enter role description'
           />
           <div className='flex w-full mt-4 justify-between items-center'>
             <h2 className='text-lg font-medium font-sfpro'>Premissions</h2>
@@ -110,7 +145,7 @@ const FormActionRole = ({ open }: FormActionRoleProps) => {
               }}
             />
           </div>
-          <div className='w-full min-h-64 mt-4 px-2 py-4 border border-dashed rounded-md overflow-auto'>
+          <div className='w-full min-h-48 mt-4 px-2 py-4 border border-dashed rounded-md overflow-auto'>
             <div className='w-full flex justify-center'></div>
             {(resourceFields ?? [])?.length === 0 && (
               <p className='text-gray-600 text-center'>
@@ -148,8 +183,24 @@ const FormActionRole = ({ open }: FormActionRoleProps) => {
               </div>
             ))}
           </div>
-          <div className='w-full flex justify-end gap-2 mt-4'>
-            <Button type='submit'>Create Role</Button>
+          <div className='w-full flex justify-end items-center gap-2 mt-4'>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AntdButton
+                  icon={<DeleteOutlined />}
+                  variant='text'
+                  onClick={() => {
+                    methods.reset();
+                  }}
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Clear data</p>
+              </TooltipContent>
+            </Tooltip>
+            <Button type='submit' loading={isLoadingCreateRole}>
+              Create Role
+            </Button>
           </div>
         </Form>
       </form>

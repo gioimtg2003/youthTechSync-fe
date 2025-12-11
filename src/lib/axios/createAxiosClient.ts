@@ -1,4 +1,4 @@
-import { JWT_ERROR_CODE, RoutesMap } from '@/constants';
+import { HEADER_TEAM_ID, JWT_ERROR_CODE, RoutesMap } from '@/constants';
 import axios, { CreateAxiosDefaults, InternalAxiosRequestConfig } from 'axios';
 import dayjs from 'dayjs';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
@@ -60,6 +60,7 @@ export function createAxiosClient({
           config.headers.Authorization = 'Bearer ' + token;
         }
       }
+      config.headers[HEADER_TEAM_ID] = 11;
       return config;
     },
     (error) => {

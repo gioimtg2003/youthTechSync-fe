@@ -13,7 +13,7 @@ const RoleTabContent = () => {
     <>
       <Dialog open={isOpen} onOpenChange={onChange}>
         <DialogContent className='p-0 overflow-hidden'>
-          <FormActionRole open={isOpen} />
+          <FormActionRole open={isOpen} onChange={onChange} />
         </DialogContent>
       </Dialog>
       <div className='w-full flex justify-between items-center mb-4'>

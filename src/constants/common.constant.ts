@@ -11,3 +11,9 @@ export enum PRICE_TYPE_ENUM {
   FIXED = 'FIXED',
   PERCENT = 'PERCENT',
 }
+
+export const DEFAULT_ID = -1;
+
+export const SEPARATOR_POLICY = '::';
+
+export const HEADER_TEAM_ID = 'x-team-id';
