@@ -5,6 +5,7 @@ import { isDeepEqualReact } from '@/utils';
 import { Plus } from 'lucide-react';
 import { memo } from 'react';
 import FormActionRole from './FormActionRole';
+import TableRole from './TableRole';
 
 const RoleTabContent = () => {
   const { isOpen, open, onChange } = useDisclosure();
@@ -27,6 +28,7 @@ const RoleTabContent = () => {
           <Plus /> <span>Add Role</span>
         </Button>
       </div>
+      <TableRole />
     </>
   );
 };

@@ -1,0 +1,32 @@
+/* Layout Form Item */
+form.form-hihi:not(.form-vertical) .form-item-horizontal {
+  @apply flex flex-row items-center;
+}
+
+.form-item-vertical {
+  @apply flex flex-col;
+}
+.form-vertical .g-form-item:not(.form-item-horizontal) .g-form-item-label {
+  @apply pb-2;
+}
+/* End */
+
+/* ******************* */
+
+/** * Form item label
+ */
+
+.form-hihi .g-form-item label[attribute-colon='true']::after {
+  @apply content-[':'] relative;
+  margin-inline-end: 8px;
+}
+.g-form-item-label {
+  @apply text-sm font-light text-[#00000073] overflow-hidden whitespace-nowrap align-middle min-h-3;
+}
+
+.g-form-item-required {
+  @apply before:content-['*'] before:text-red-500 before:!leading-[1] before:inline-block before:text-sm;
+}
+.g-form-item-label {
+}
+/* End */

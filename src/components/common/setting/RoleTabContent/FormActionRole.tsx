@@ -3,7 +3,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Form } from '@/components/ui/form';
 import { SYSTEM_RESOURCE, SYSTEM_RESOURCE_LABEL_MAPPING } from '@/constants';
 import { cn } from '@/lib/utils';
 import { useGetPolicy } from '@/services/v1/policy';
@@ -26,8 +25,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { getQueryClient } from '@/providers/query.provider';
+import { ENDPOINT_GET_ROLE } from '@/services/v1/role/get';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button as AntdButton } from 'antd';
+import Form from '../../form/BaseForm';
 export interface FormActionRoleProps {
   open: boolean;
   onChange: (open: boolean) => void;
@@ -65,28 +67,30 @@ const FormActionRole = ({ open, onChange }: FormActionRoleProps) => {
     disabled:
       r !== SYSTEM_RESOURCE.all && resources?.includes(SYSTEM_RESOURCE.all),
   }));
+  const queryClient = getQueryClient();
+
+  const onSubmit = (data: TRoleSchema) => {
+    createRole(
+      {
+        name: data.name,
+        description: data?.description,
+        permissions: (data?.permissions ??
+          []) as CreateRoleRequest['permissions'],
+      },
+      {
+        onSuccess: () => {
+          methods.reset();
+          queryClient?.invalidateQueries({ queryKey: [ENDPOINT_GET_ROLE] });
+          onChange(false);
+        },
+      }
+    );
+  };
 
   return (
     <div className='max-w-3xl max-h-[515px] overflow-auto p-6 scrollbar-form-role-action'>
-      <form
-        onSubmit={methods.handleSubmit((data) => {
-          createRole(
-            {
-              name: data.name,
-              description: data?.description,
-              permissions: (data?.permissions ??
-                []) as CreateRoleRequest['permissions'],
-            },
-            {
-              onSuccess: () => {
-                methods.reset();
-                onChange(false);
-              },
-            }
-          );
-        })}
-      >
-        <Form {...methods}>
+      <Form<TRoleSchema> onSubmit={onSubmit}>
+        <>
           <DialogHeader>
             <DialogTitle> Create new role</DialogTitle>
           </DialogHeader>
@@ -202,8 +206,8 @@ const FormActionRole = ({ open, onChange }: FormActionRoleProps) => {
               Create Role
             </Button>
           </div>
-        </Form>
-      </form>
+        </>
+      </Form>
     </div>
   );
 };

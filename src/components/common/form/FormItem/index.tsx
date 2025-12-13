@@ -1,0 +1,214 @@
+import type { FieldValueType } from '@/components/common/field/type';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import {
+  useContext,
+  useMemo,
+  type PropsWithChildren,
+  type ReactNode,
+} from 'react';
+import {
+  Controller,
+  type ControllerFieldState,
+  type ControllerRenderProps,
+  type UseFormStateReturn,
+} from 'react-hook-form';
+import { GFormProviderContext } from '../BaseForm/GFormProvider';
+import { ModeFormContext } from '../ModeForm';
+import { ProviderConfigContext } from '../ProviderConfig';
+import type { FormConfigProps, FormModeType, WrapFormItemProps } from '../type';
+import './style.css';
+
+export interface FormItemProps extends FormConfigProps, WrapFormItemProps {
+  children: ({
+    field,
+    fieldState,
+    formState,
+  }: {
+    field: ControllerRenderProps<any, string>;
+    fieldState: ControllerFieldState;
+    formState: UseFormStateReturn<any>;
+  }) => React.ReactElement;
+  mode?: FormModeType;
+
+  /**
+   * @default text
+   */
+  valueType?: FieldValueType;
+}
+
+const WrapperFormField: React.FC<PropsWithChildren<WrapFormItemProps>> = (
+  props
+) => {
+  const {
+    children,
+    addonAfter,
+    addonBefore,
+    addonWrapStyle,
+    addonWrapClassName,
+    addonAfterClassName,
+    addonBeforeClassName,
+  } = props;
+
+  if (!addonAfter && !addonBefore) {
+    return <>{children}</>;
+  }
+
+  return (
+    <div className={addonWrapClassName} style={addonWrapStyle}>
+      {addonBefore && (
+        <span style={{ marginInlineEnd: 8 }} className={addonBeforeClassName}>
+          {addonBefore}
+        </span>
+      )}
+      {children}
+      {addonAfter && (
+        <span style={{ marginInlineStart: 8 }} className={addonAfterClassName}>
+          {addonAfter}
+        </span>
+      )}
+    </div>
+  );
+};
+
+const LayoutFormItem: React.FC<
+  PropsWithChildren<{
+    label?: FormConfigProps['label'];
+    required?: boolean;
+    name: string;
+    tooltip?: ReactNode;
+  }>
+> = ({ children, label, tooltip, name }) => {
+  const { layout, colon } = useContext(ProviderConfigContext);
+  const { layout: layoutForm } = useContext(GFormProviderContext);
+
+  const className = useMemo(() => {
+    return cn('g-form-item', {
+      'form-item-horizontal':
+        layout === 'horizontal' && layoutForm !== 'vertical',
+      'form-item-vertical': layout === 'vertical' || layoutForm === 'vertical',
+    });
+  }, [layout, layoutForm]);
+
+  const domLabel = useMemo(
+    () =>
+      label ? (
+        <div className={cn('g-form-item-label')}>
+          {/* // TODO: add required */}
+          <label htmlFor={name} attribute-colon={colon && 'true'}>
+            {/* TODO: improve render question icon */}
+            {label} {tooltip ? <QuestionCircleOutlined /> : null}
+          </label>
+        </div>
+      ) : null,
+    [label, name, colon]
+  );
+
+  if (tooltip)
+    return (
+      <div className={className}>
+        {domLabel && (
+          <TooltipProvider>
+            <Tooltip delayDuration={100}>
+              <TooltipTrigger>{domLabel}</TooltipTrigger>
+              <TooltipContent>{tooltip}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+        {children}
+      </div>
+    );
+
+  return (
+    <div className={className}>
+      {domLabel}
+      {children}
+    </div>
+  );
+};
+
+export default function FormItem(props: FormItemProps) {
+  const { name: nameProp, label, tooltip, children, mode } = props;
+  const propsWrapperFormItem = useMemo(() => {
+    const {
+      addonAfter,
+      addonBefore,
+      addonWrapStyle,
+      addonWrapClassName,
+      addonAfterClassName,
+      addonBeforeClassName,
+    } = props;
+
+    return {
+      addonAfter,
+      addonBefore,
+      addonWrapStyle,
+      addonWrapClassName,
+      addonAfterClassName,
+      addonBeforeClassName,
+    };
+  }, [
+    props?.addonAfter,
+    props.addonBefore,
+    props.addonWrapStyle,
+    props.addonWrapClassName,
+    props.addonAfterClassName,
+    props.addonBeforeClassName,
+  ]);
+
+  /**
+   * name is required for react-hook-form to register the field.
+   * It can be a string or an array of strings.
+   * If it's an array, it will be joined with an underscore.
+   */
+  const name = useMemo(() => {
+    let name = nameProp;
+    if (Array.isArray(name)) name = name?.join('_');
+
+    if (typeof name === 'string') {
+      name = name?.trim();
+    }
+    if (!name) {
+      console.warn('FormItem: name is required');
+      return '';
+    }
+    return name;
+  }, [nameProp]);
+  const { control } = useContext(GFormProviderContext);
+
+  return (
+    <ProviderConfigContext.Provider
+      value={{
+        layout: 'horizontal', // default layout
+        colon: true, // default colon
+        size: 'middle', // default size
+        ...props,
+      }}
+      key={name}
+    >
+      <ModeFormContext.Provider value={{ mode: mode || 'edit' }}>
+        <Controller
+          name={name}
+          control={control}
+          render={(props) => {
+            return (
+              <LayoutFormItem name={name} label={label} tooltip={tooltip}>
+                <WrapperFormField {...propsWrapperFormItem}>
+                  <div className='form-item-control max-w-full'>
+                    {children(props)}
+                  </div>
+                </WrapperFormField>
+              </LayoutFormItem>
+            );
+          }}
+        />
+      </ModeFormContext.Provider>
+    </ProviderConfigContext.Provider>
+  );
+}

@@ -29,6 +29,6 @@ export const useGetTeam = (
 ) =>
   useQuery({
     ...options,
-    queryKey: getQueryKey({ ...options }),
+    queryKey: getQueryKey({ ...options?.params }),
     queryFn: getTeam,
   });
