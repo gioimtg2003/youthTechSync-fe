@@ -9,6 +9,7 @@ function extractSubdomain(request: NextRequest): string | null {
     request.headers.get('x-forwarded-host');
   const hostHeader = forwarded ?? (request.headers.get('host') || '');
   const hostname = hostHeader.split(':')[0];
+
   // Local development environment
   if (url.includes('localhost') || url.includes('127.0.0.1')) {
     // Try to extract subdomain from the full URL
@@ -27,7 +28,7 @@ function extractSubdomain(request: NextRequest): string | null {
       return hostname.split('.')[0];
     }
 
-    return null;
+    return 'teama';
   }
 
   // Production environment
@@ -50,6 +51,7 @@ function extractSubdomain(request: NextRequest): string | null {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const subdomain = extractSubdomain(request);
+  console.log("🚀 ~ middleware ~ subdomain:", subdomain)
 
   if (subdomain) {
     // Block access to admin page from subdomains
