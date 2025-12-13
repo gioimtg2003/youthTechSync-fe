@@ -28,7 +28,7 @@ function extractSubdomain(request: NextRequest): string | null {
       return hostname.split('.')[0];
     }
 
-    return 'teama';
+    return 'localhost';
   }
 
   // Production environment
@@ -51,7 +51,10 @@ function extractSubdomain(request: NextRequest): string | null {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const subdomain = extractSubdomain(request);
-  console.log("🚀 ~ middleware ~ subdomain:", subdomain)
+
+  if (subdomain === 'localhost' && pathname.startsWith('/login')) {
+    return NextResponse.next();
+  }
 
   if (subdomain) {
     // Block access to admin page from subdomains
