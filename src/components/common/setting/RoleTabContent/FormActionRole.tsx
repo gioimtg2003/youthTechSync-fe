@@ -29,6 +29,7 @@ import { getQueryClient } from '@/providers/query.provider';
 import { ENDPOINT_GET_ROLE } from '@/services/v1/role/get';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button as AntdButton } from 'antd';
+import { FormText } from '../../form';
 import Form from '../../form/BaseForm';
 export interface FormActionRoleProps {
   open: boolean;
@@ -94,12 +95,12 @@ const FormActionRole = ({ open, onChange }: FormActionRoleProps) => {
           <DialogHeader>
             <DialogTitle> Create new role</DialogTitle>
           </DialogHeader>
-          <InputForm
-            control={methods.control}
+          <FormText
             name='name'
             label='Role Name'
-            placeholder='Enter role name'
-            className='mb-4'
+            fieldProps={{
+              className: 'mb-4',
+            }}
           />
           <InputForm
             control={methods.control}

@@ -19,10 +19,10 @@ import {
   type ControllerRenderProps,
   type UseFormStateReturn,
 } from 'react-hook-form';
-import { GFormProviderContext } from '../BaseForm/GFormProvider';
+import { GFormProviderConfigContext } from '../BaseForm/GFormProviderConfig';
 import { ModeFormContext } from '../ModeForm';
-import { ProviderConfigContext } from '../ProviderConfig';
 import type { FormConfigProps, FormModeType, WrapFormItemProps } from '../type';
+import { FormItemProvider } from './FormItemProvider';
 import './style.css';
 
 export interface FormItemProps extends FormConfigProps, WrapFormItemProps {
@@ -85,8 +85,8 @@ const LayoutFormItem: React.FC<
     tooltip?: ReactNode;
   }>
 > = ({ children, label, tooltip, name }) => {
-  const { layout, colon } = useContext(ProviderConfigContext);
-  const { layout: layoutForm } = useContext(GFormProviderContext);
+  const { layout, colon } = useContext(FormItemProvider);
+  const { layout: layoutForm } = useContext(GFormProviderConfigContext);
 
   const className = useMemo(() => {
     return cn('g-form-item', {
@@ -180,10 +180,10 @@ export default function FormItem(props: FormItemProps) {
     }
     return name;
   }, [nameProp]);
-  const { control } = useContext(GFormProviderContext);
+  const { control } = useContext(GFormProviderConfigContext);
 
   return (
-    <ProviderConfigContext.Provider
+    <FormItemProvider.Provider
       value={{
         layout: 'horizontal', // default layout
         colon: true, // default colon
@@ -209,6 +209,6 @@ export default function FormItem(props: FormItemProps) {
           }}
         />
       </ModeFormContext.Provider>
-    </ProviderConfigContext.Provider>
+    </FormItemProvider.Provider>
   );
 }

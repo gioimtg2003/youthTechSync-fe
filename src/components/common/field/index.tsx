@@ -8,8 +8,8 @@ import {
   useContext,
   type ForwardRefRenderFunction,
 } from 'react';
+import { FormItemProvider } from '../form/FormItem/FormItemProvider';
 import { ModeFormContext } from '../form/ModeForm';
-import { ProviderConfigContext } from '../form/ProviderConfig';
 import type { FormModeType } from '../form/type';
 import { getSizeOfField } from './helper/getSizeOfField';
 import type { CommonRefField } from './ref.type';
@@ -67,7 +67,7 @@ const Field: ForwardRefRenderFunction<CommonRefField, FieldPropsType> = (
   } = props ?? {};
 
   const { mode } = useContext(ModeFormContext);
-  const { size } = useContext(ProviderConfigContext);
+  const { size } = useContext(FormItemProvider);
 
   const onChangeCallBack = useRefFunction((...restParams: any[]) => {
     restFieldProps?.onChange?.(...restParams);

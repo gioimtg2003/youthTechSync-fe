@@ -10,7 +10,7 @@ import {
   type Resolver,
 } from 'react-hook-form';
 import type { FormConfigProps } from '../type';
-import { GFormProviderContext } from './GFormProvider';
+import { GFormProviderConfigContext } from './GFormProviderConfig';
 
 export interface BaseFormProps<Schema extends FieldValues> {
   resolver?: Resolver<Schema>;
@@ -47,7 +47,7 @@ export default function Form<Schema extends FieldValues = {}>(
     [layout]
   );
   return (
-    <GFormProviderContext.Provider value={{ control, layout }}>
+    <GFormProviderConfigContext.Provider value={{ control, layout }}>
       <FormProvider {...methods}>
         <form
           onSubmit={handleSubmit(onSubmit ?? (() => {}))}
@@ -56,6 +56,6 @@ export default function Form<Schema extends FieldValues = {}>(
           {children}
         </form>
       </FormProvider>
-    </GFormProviderContext.Provider>
+    </GFormProviderConfigContext.Provider>
   );
 }

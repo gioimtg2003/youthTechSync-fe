@@ -10,6 +10,8 @@
   font-family: var(--font-sfpro);
 }
 
+
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -86,6 +88,8 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --nav-link: #5f5e5b;
+
+  --prefixCls: 'no-blogg'
 }
 
 .dark {

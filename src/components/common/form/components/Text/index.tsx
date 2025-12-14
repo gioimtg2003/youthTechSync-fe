@@ -5,10 +5,17 @@ import FormField, { GFormFieldProps } from '../../Field';
 
 export type FormTextProps = GFormFieldProps<InputProps, InputRef>;
 const FormText: ForwardRefRenderFunction<InputRef, FormTextProps> = (
-  props,
+  { fieldProps, valueType = 'text', ...restProps },
   ref
 ) => {
-  return <FormField {...props} ref={ref} valueType='text' />;
+  return (
+    <FormField
+      fieldProps={fieldProps}
+      valueType={valueType}
+      ref={ref}
+      {...restProps}
+    />
+  );
 };
 
 FormText.displayName = 'FormText';
