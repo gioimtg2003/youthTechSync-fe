@@ -1,6 +1,5 @@
 import { defaultPrefixCls } from '@/constants';
 import { createContext } from 'react';
-import type { Control } from 'react-hook-form';
 import type { FormConfigProps } from '../type';
 
 export interface ConfigComponentProps {
@@ -34,11 +33,9 @@ const defaultGetPrefixCls = (
 
 export const GFormProviderConfigContext = createContext<
   {
-    control: Control<any>;
     layout: FormConfigProps['layout'];
   } & ConfigConsumerProps
 >({
-  control: {} as Control<any>,
   layout: 'horizontal',
   getPrefixCls: defaultGetPrefixCls,
 });

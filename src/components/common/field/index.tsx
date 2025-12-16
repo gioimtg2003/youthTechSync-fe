@@ -13,8 +13,10 @@ import { ModeFormContext } from '../form/ModeForm';
 import type { FormModeType } from '../form/type';
 import { getSizeOfField } from './helper/getSizeOfField';
 import type { CommonRefField } from './ref.type';
+import FieldSelect from './Select';
 import './style.css';
 import FieldText from './Text';
+
 import type {
   FieldFCRenderProps,
   FieldPropsType,
@@ -47,6 +49,10 @@ const renderField = (
 
   if (valueType === 'text') {
     return <FieldText {...commonProps} />;
+  }
+
+  if (valueType === 'select') {
+    return <FieldSelect {...commonProps} />;
   }
 
   return null;
@@ -88,7 +94,8 @@ const Field: ForwardRefRenderFunction<CommonRefField, FieldPropsType> = (
     mode,
     {
       ...rest,
-      fieldProps,
+      ...fieldProps,
+      adapter: restFieldProps?.adapter || rest?.adapter,
       ref,
       value,
     }

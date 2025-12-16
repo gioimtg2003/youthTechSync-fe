@@ -15,6 +15,8 @@ import {
 } from 'react';
 import {
   Controller,
+  useController,
+  useFormContext,
   type ControllerFieldState,
   type ControllerRenderProps,
   type UseFormStateReturn,
@@ -180,7 +182,11 @@ export default function FormItem(props: FormItemProps) {
     }
     return name;
   }, [nameProp]);
-  const { control } = useContext(GFormProviderConfigContext);
+
+  const { control } = useFormContext();
+
+  const controller = useController({ name, control });
+  const error = controller.fieldState?.error?.message;
 
   return (
     <FormItemProvider.Provider
@@ -202,6 +208,11 @@ export default function FormItem(props: FormItemProps) {
                 <WrapperFormField {...propsWrapperFormItem}>
                   <div className='form-item-control max-w-full'>
                     {children(props)}
+                    {error && (
+                      <p className='mt-1 truncate text-xs text-red-500'>
+                        {error}
+                      </p>
+                    )}
                   </div>
                 </WrapperFormField>
               </LayoutFormItem>

@@ -35,6 +35,13 @@ export type BaseFieldFCProps = {
   fieldProps?: Record<string, any>;
   autofocus?: boolean;
   mode?: FormModeType;
+
+  /**
+   * The value provider of the field.
+   * @default shadcn
+   * @type {any}
+   */
+  adapter?: 'shadcn' | 'antd' | 'custom';
 };
 
 export type FieldFCRenderProps = Omit<
@@ -57,5 +64,7 @@ export type FieldFC<
   RefType extends CommonRefField = any,
 > = React.ForwardRefRenderFunction<
   RefType,
-  T & BaseFieldFCProps & Omit<ControllerRenderProps<any, string>, 'ref'>
+  T &
+    Omit<BaseFieldFCProps, 'fieldProps'> &
+    Omit<ControllerRenderProps<any, string>, 'ref'>
 >;

@@ -1,9 +1,11 @@
 import { defaultPrefixCls } from '@/constants';
 import { cn } from '@/lib/utils';
-import { useMemo } from 'react';
+import { forwardRef, useImperativeHandle, useMemo } from 'react';
 import {
+  FieldPath,
   FormProvider,
   useForm,
+  UseFormReturn,
   type DefaultValues,
   type FieldValues,
   type Mode,
@@ -13,21 +15,36 @@ import type { FormConfigProps } from '../type';
 import { GFormProviderConfigContext } from './GFormProviderConfig';
 
 export interface BaseFormProps<Schema extends FieldValues> {
-  resolver?: Resolver<Schema>;
+  resolver: Resolver<Schema>;
   defaultValues?: DefaultValues<Schema>;
   onSubmit?: (data: Schema) => void;
   modeValidate?: Mode;
   layout?: FormConfigProps['layout'];
+
+  children?:
+    | ((props: {
+        methods: UseFormReturn<Schema, any, Schema>;
+      }) => React.ReactNode)
+    | React.ReactNode;
 }
 
-export default function Form<Schema extends FieldValues = {}>(
-  props: React.PropsWithChildren<BaseFormProps<Schema>>
+export type BaseGFormRef<T extends FieldValues> = {
+  reset: () => void;
+
+  getValues: () => T;
+
+  getValue: (field: FieldPath<T>) => T[keyof T];
+};
+
+function Form<Schema extends FieldValues = {}>(
+  props: BaseFormProps<Schema>,
+  ref: React.Ref<BaseGFormRef<Schema>>
 ) {
   const {
     resolver,
     defaultValues,
     onSubmit,
-    modeValidate = 'onBlur',
+    modeValidate = 'onSubmit',
     children,
     layout = 'horizontal',
   } = props;
@@ -36,7 +53,19 @@ export default function Form<Schema extends FieldValues = {}>(
     defaultValues,
     mode: modeValidate,
   });
-  const { handleSubmit, control } = methods;
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      reset: () => {
+        methods.reset();
+      },
+      getValues: () => methods.getValues(),
+
+      getValue: (field) => methods.getValues(field),
+    }),
+    []
+  );
 
   const classNames = useMemo(
     () =>
@@ -46,16 +75,23 @@ export default function Form<Schema extends FieldValues = {}>(
       }),
     [layout]
   );
+
   return (
-    <GFormProviderConfigContext.Provider value={{ control, layout }}>
+    <GFormProviderConfigContext.Provider value={{ layout }}>
       <FormProvider {...methods}>
         <form
-          onSubmit={handleSubmit(onSubmit ?? (() => {}))}
+          onSubmit={methods?.handleSubmit(onSubmit ?? (() => {}))}
           className={classNames}
         >
-          {children}
+          {typeof children === 'function' ? children({ methods }) : children}
         </form>
       </FormProvider>
     </GFormProviderConfigContext.Provider>
   );
 }
+
+export default forwardRef(Form) as <Schema extends FieldValues = {}>(
+  props: BaseFormProps<Schema> & {
+    ref?: React.Ref<BaseGFormRef<Schema>>;
+  }
+) => React.ReactElement;

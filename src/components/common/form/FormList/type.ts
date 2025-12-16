@@ -4,22 +4,28 @@ export type IconConfig = {
   /**
    * Icon: ()=> <div/>
    */
-  Icon?: React.FC<any>;
+  icon?: React.FC<any>;
   /**
    * tooltip text
    */
   tooltip?: string;
 };
 
-export type FormListFieldData = {
-  name: number;
+export type FormListFieldData<Schema> = {
+  value: Schema;
   key: number;
+  idx: number;
+  id: string | number;
 };
 
 export type FormListOperation = {
   add: (defaultValue?: any, insertIndex?: number) => void;
   remove: (index: number | number[]) => void;
   move: (from: number, to: number) => void;
+};
+export type FormListActionType<T = any> = FormListOperation & {
+  get: (index: number) => T | undefined;
+  getList: () => T[] | undefined;
 };
 
 export type FormListCommonProps = {
@@ -43,27 +49,33 @@ export type FormListCommonProps = {
    */
   creatorRecord?: Record<string, any> | (() => Record<string, any>);
 
-  containerClassName?: HTMLElement['className'];
+  className?: HTMLElement['className'];
 
-  containerStyle?: HTMLElement['style'];
+  containerStyle?: React.CSSProperties;
 };
 
-export type FormListProps = FormListCommonProps &
-  FormConfigProps & {
+export type FormListProps<T> = FormListCommonProps &
+  Omit<FormConfigProps, 'label'> & {
     initialValue?: Record<string, any>[];
     children: (
-      fields: FormListFieldData[],
-      operation: FormListOperation,
-      meta: { errors: React.ReactNode[]; warnings: React.ReactNode[] }
+      fields: FormListFieldData<T>[],
+      operation: FormListOperation
     ) => React.ReactNode;
 
-    onAfterAdd?: (
-      ...params: [...Parameters<FormListOperation['add']>, number]
-    ) => void;
+    onAfterAdd?: (...params: [...Parameters<FormListOperation['add']>]) => void;
 
     onAfterRemove?: (
       ...params: [...Parameters<FormListOperation['remove']>, number]
     ) => void;
 
     emptyList?: React.ReactNode;
+
+    actionRef?: React.RefObject<FormListActionType<T> | undefined>;
+
+    min?: number;
+
+    /**
+     * Maximum number of items allowed in the list
+     */
+    max?: number;
   };

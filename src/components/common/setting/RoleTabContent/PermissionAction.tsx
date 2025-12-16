@@ -5,9 +5,11 @@ import {
   SYSTEM_RESOURCE,
 } from '@/constants';
 import { cn } from '@/lib/utils';
-import { genKey, isDeepEqualReact } from '@/utils';
-import { memo } from 'react';
-import { useFieldArray, UseFormReturn } from 'react-hook-form';
+import { isDeepEqualReact } from '@/utils';
+import { memo, useRef } from 'react';
+import { useFormContext, UseFormReturn } from 'react-hook-form';
+import FormList from '../../form/FormList';
+import { FormListActionType } from '../../form/FormList/type';
 import AntdSelectForm from '../../form/select-form-antd';
 import ScopeActionItem from './ScopeActionItem';
 import { TRoleSchema } from './zod';
@@ -19,22 +21,26 @@ export interface PermissionActionProps {
   resource: string;
 }
 const PermissionAction = (props: PermissionActionProps) => {
-  const { methods, resourceId, actions, resource } = props;
-  const {
-    fields: actionFields,
-    append: appendAction,
-    remove: removeAction,
-  } = useFieldArray<TRoleSchema['permissions'][number]>({
-    control: methods.control,
-    name: `permissions.${resourceId}.actions` as 'actions',
-  });
+  const { resourceId, actions, resource } = props;
+
+  const { control, setValue, getValues, watch } = useFormContext();
+
+  const actionFormListRef =
+    useRef<
+      FormListActionType<TRoleSchema['permissions'][number]['actions'][number]>
+    >(undefined);
+  const nameFormList = `permissions.${resourceId}.actions`;
+
+  const actionFields = watch(
+    nameFormList
+  ) as TRoleSchema['permissions'][number]['actions'];
 
   const optionsActions = actions?.map((action) => ({
     label: ACTION_PERMISSION_LABEL_MAPPING[action],
     value: action,
     disabled:
       action !== ActionPermission.manage &&
-      actionFields?.some((af) => af.action === ActionPermission.manage),
+      actionFields?.some((f) => f?.action === ActionPermission.manage),
   }));
 
   return (
@@ -42,7 +48,7 @@ const PermissionAction = (props: PermissionActionProps) => {
       <div className='flex justify-between items-center mb-3'>
         <h4 className='text-sm font-medium font-sfpro'>Actions</h4>
         <AntdSelectForm
-          control={methods.control}
+          control={control}
           name={`permissions.${resourceId}.permissionActions`}
           placeholder='Select actions'
           containerClassName='max-w-[156px]'
@@ -52,27 +58,25 @@ const PermissionAction = (props: PermissionActionProps) => {
           mode='multiple'
           allowClear
           onClear={() => {
-            methods.setValue(`permissions.${resourceId}.actions`, []);
+            setValue(nameFormList, []);
           }}
           onDeselect={(v) => {
             const index = actionFields?.findIndex((act) => act?.action === v);
             if (index !== -1) {
-              removeAction(index);
+              actionFormListRef.current?.remove(index);
             }
           }}
           onSelect={(v) => {
+            console.log('🚀 ~ PermissionAction ~ getValues:', getValues());
+
             if (v === ActionPermission.manage) {
               // remove all other actions if manage is selected
-              methods.setValue(`permissions.${resourceId}.actions`, [
-                { action: v },
-              ]);
+              setValue(nameFormList, [{ action: v }]);
 
-              methods.setValue(`permissions.${resourceId}.permissionActions`, [
-                v,
-              ]);
+              setValue(`permissions.${resourceId}.permissionActions`, [v]);
               return;
             }
-            appendAction({
+            actionFormListRef.current?.add({
               action: v,
             });
           }}
@@ -82,45 +86,53 @@ const PermissionAction = (props: PermissionActionProps) => {
         />
       </div>
 
-      {(actionFields ?? [])?.length === 0 && (
-        <p className='text-sm text-muted-foreground'>
-          No actions selected for this permission.
-        </p>
-      )}
-
-      <div className='flex flex-col gap-y-3'>
-        {actionFields?.map((f) => {
-          const Icon =
-            ACTION_PERMISSION_ICON_MAPPING[f.action as ActionPermission];
-          return (
-            <div
-              key={f?.id}
-              className={cn(
-                'flex items-center justify-between w-full',
-                f.action === ActionPermission.create && 'justify-start'
-              )}
-            >
-              <div className={'flex justify-center items-center gap-1'}>
-                <Icon className='size-4 text-gray-600' />
-                <span className='text-sm font-medium'>
-                  {
-                    ACTION_PERMISSION_LABEL_MAPPING[
-                      f.action as ActionPermission
-                    ]
-                  }
-                </span>
-              </div>
-              {f?.action !== ActionPermission.create &&
-                resource !== SYSTEM_RESOURCE.all && (
-                  <ScopeActionItem
-                    name={`permissions.${resourceId}.actions.${f.id}.scope`}
-                    control={methods.control}
-                  />
+      <FormList<TRoleSchema['permissions'][number]['actions'][number]>
+        name={nameFormList}
+        emptyList={
+          <p className='text-sm text-muted-foreground'>
+            No actions selected for this permission.
+          </p>
+        }
+        className='flex flex-col gap-y-3'
+        actionRef={actionFormListRef}
+      >
+        {(fields) =>
+          fields?.map((f) => {
+            const Icon =
+              ACTION_PERMISSION_ICON_MAPPING[
+                f?.value?.action as ActionPermission
+              ];
+            return (
+              <div
+                key={f?.key}
+                className={cn(
+                  'flex items-center justify-between w-full',
+                  f?.value?.action === ActionPermission.create &&
+                    'justify-start'
                 )}
-            </div>
-          );
-        })}
-      </div>
+              >
+                <div className={'flex justify-center items-center gap-1'}>
+                  <Icon className='size-4 text-gray-600' />
+                  <span className='text-sm font-medium'>
+                    {
+                      ACTION_PERMISSION_LABEL_MAPPING[
+                        f?.value?.action as ActionPermission
+                      ]
+                    }
+                  </span>
+                </div>
+                {f?.value?.action !== ActionPermission.create &&
+                  resource !== SYSTEM_RESOURCE.all && (
+                    <ScopeActionItem
+                      name={`${nameFormList}.${f.id}.scope`}
+                      control={control}
+                    />
+                  )}
+              </div>
+            );
+          })
+        }
+      </FormList>
     </>
   );
 };
