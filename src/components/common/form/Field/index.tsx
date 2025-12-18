@@ -8,8 +8,8 @@ import type { FormConfigProps, GFormFieldItemProps } from '../type';
 
 export type GFormFieldProps<
   FiledProps = Record<string, any>,
-  K = any,
-> = GFormFieldItemProps<FiledProps, K> & {
+  TRef = any,
+> = GFormFieldItemProps<FiledProps, TRef> & {
   //TODO: Improve ts
   ref?: React.Ref<any>;
 } & Pick<BaseFieldFCProps, 'adapter' | 'autoFocus' | 'mode'> &

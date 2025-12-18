@@ -8,6 +8,12 @@ import { FieldFC } from '../type';
 export type SelectFieldProps = {};
 const FieldSelect: FieldFC<{}> = (props, ref) => {
   const { mode, adapter, fieldProps, ...restProps } = props;
+  const {
+    label: labelField = 'label',
+    value: valueField = 'value',
+    children: childrenField = 'children',
+  } = fieldProps?.fieldNames ?? {};
+
   const refSelect = useRef<any>(null);
 
   useImperativeHandle(ref, () => refSelect?.current, []);
@@ -26,10 +32,10 @@ const FieldSelect: FieldFC<{}> = (props, ref) => {
       while (i < length) {
         const cur = opt[i++];
 
-        valuesMap.set(cur?.value, cur?.label);
+        valuesMap.set(cur?.[valueField], cur?.[labelField]);
 
         // Recursive traverse children
-        traverseOpt(cur?.children || cur?.value);
+        traverseOpt(cur?.[childrenField] || cur?.[valueField]);
       }
 
       return valuesMap;

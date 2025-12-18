@@ -78,10 +78,20 @@ export type WrapFormItemProps = {
   rootStyle?: React.CSSProperties;
 };
 
-export type FieldProps<K> = {
+export type FieldProps<TRef = any> = {
   style?: React.CSSProperties;
   width?: string | number;
-  ref?: React.Ref<K>;
+  ref?: React.Ref<TRef>;
+
+  /**
+   * This property is used to customize the field names for value, label, and children in complex components like select or tree select.
+   */
+  fieldNames?: {
+    label?: string;
+    value?: string;
+    options?: string;
+    children?: string;
+  };
 };
 
 export type FormItemProps = {
@@ -93,12 +103,12 @@ export type FormItemProps = {
 
 export type GFormFieldItemProps<
   T = Record<string, any>,
-  K = any,
+  TRef = any,
 > = FormItemProps & {
   /**
    *
    */
-  fieldProps?: Partial<FieldProps<K> & T>;
+  fieldProps?: Partial<FieldProps<TRef> & T>;
 
   emptyText?: React.ReactNode;
 

@@ -87,8 +87,6 @@ const FormActionRole = ({
         ? `Edit ${dataProps?.name ?? 'role'}`
         : `View ${dataProps?.name ?? 'role'}`;
 
-    
-
   return (
     <div className='max-w-3xl max-h-[515px] overflow-auto p-6 scrollbar-form-role-action'>
       <Form<TRoleSchema>

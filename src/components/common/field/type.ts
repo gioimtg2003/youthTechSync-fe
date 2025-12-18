@@ -3,7 +3,7 @@ import type {
   ControllerRenderProps,
   UseFormStateReturn,
 } from 'react-hook-form';
-import { FormModeType } from '../form/type';
+import { FieldProps, FormModeType } from '../form/type';
 import { CommonRefField } from './ref.type';
 
 export type FieldValueType =
@@ -32,7 +32,9 @@ export type CustomRenderFieldPRopsType = {
 };
 
 export type BaseFieldFCProps = {
-  fieldProps?: Record<string, any>;
+  fieldProps?: FieldProps & {
+    [key: string]: any;
+  };
   autoFocus?: boolean;
   mode?: FormModeType;
 
