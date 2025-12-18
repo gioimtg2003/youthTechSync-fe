@@ -54,11 +54,21 @@ export type FieldFCRenderProps = Omit<
   UseFormStateReturn<any> &
   BaseFieldFCProps & {
     id?: string;
-  };
+  } & RenderFieldPropsType;
 
 export type FieldPropsType = FieldFCRenderProps & {
   emptyText?: React.ReactNode;
   valueType?: FieldValueType;
+};
+
+export type RenderFieldPropsType<T = {}> = {
+  render?: (value: any, props: T, dom: React.ReactNode) => React.ReactNode;
+
+  renderFormItem?: (
+    value: any,
+    props: T,
+    dom: React.ReactNode
+  ) => React.ReactNode;
 };
 
 export type FieldFC<
@@ -66,5 +76,8 @@ export type FieldFC<
   RefType extends CommonRefField = any,
 > = React.ForwardRefRenderFunction<
   RefType,
-  T & BaseFieldFCProps & Omit<ControllerRenderProps<any, string>, 'ref'>
+  T &
+    BaseFieldFCProps &
+    Omit<ControllerRenderProps<any, string>, 'ref'> &
+    RenderFieldPropsType<T>
 >;

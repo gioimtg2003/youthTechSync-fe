@@ -21,6 +21,8 @@ const BaseFormField: React.FC<GFormFieldProps> = (props) => {
     valueType,
     adapter = 'shadcn',
     autoFocus,
+    render,
+    renderFormItem,
     ref,
     ...restProps
   } = props;
@@ -39,12 +41,14 @@ const BaseFormField: React.FC<GFormFieldProps> = (props) => {
       {({ field, fieldState, formState }) => {
         return (
           <Field
-            valueType={valueType}
             {...field}
-            id={field.name}
             {...fieldState}
             {...formState}
             {...commonFieldProps}
+            id={field.name}
+            valueType={valueType}
+            render={render}
+            renderFormItem={renderFormItem}
           />
         );
       }}

@@ -7,7 +7,7 @@ import { FieldFC } from '../type';
 
 export type SelectFieldProps = {};
 const FieldSelect: FieldFC<{}> = (props, ref) => {
-  const { mode, adapter, fieldProps, ...restProps } = props;
+  const { mode, adapter, render, fieldProps, ...restProps } = props;
   const {
     label: labelField = 'label',
     value: valueField = 'value',
@@ -49,6 +49,8 @@ const FieldSelect: FieldFC<{}> = (props, ref) => {
       restProps?.value || fieldProps?.value,
       objectToMap(optionsValueEnum)
     );
+
+    if (render) return <>{render(restProps?.value, { ...fieldProps }, dom)}</>;
 
     return <>{dom}</>;
   }

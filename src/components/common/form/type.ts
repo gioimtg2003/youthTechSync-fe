@@ -1,5 +1,5 @@
 import type React from 'react';
-import type { FieldValueType } from '../field/type';
+import type { FieldValueType, RenderFieldPropsType } from '../field/type';
 
 /**
  * FormConfigProps defines the configuration for a form component.
@@ -104,22 +104,23 @@ export type FormItemProps = {
 export type GFormFieldItemProps<
   T = Record<string, any>,
   TRef = any,
-> = FormItemProps & {
-  /**
-   *
-   */
-  fieldProps?: Partial<FieldProps<TRef> & T>;
+> = FormItemProps &
+  RenderFieldPropsType<T> & {
+    /**
+     *
+     */
+    fieldProps?: Partial<FieldProps<TRef> & T>;
 
-  emptyText?: React.ReactNode;
+    emptyText?: React.ReactNode;
 
-  /**
-   * The width of the form item.
-   * It can be a number (in pixels) or a string representing a size.
-   * @type xs=104px
-   * @type sm=216px
-   * @type md=328px
-   * @type lg=440px
-   * @type xl=552px
-   */
-  width?: number | 'sm' | 'md' | 'xl' | 'xs' | 'lg';
-};
+    /**
+     * The width of the form item.
+     * It can be a number (in pixels) or a string representing a size.
+     * @type xs=104px
+     * @type sm=216px
+     * @type md=328px
+     * @type lg=440px
+     * @type xl=552px
+     */
+    width?: number | 'sm' | 'md' | 'xl' | 'xs' | 'lg';
+  };
