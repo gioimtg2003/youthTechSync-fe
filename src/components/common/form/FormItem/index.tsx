@@ -199,6 +199,7 @@ export default function FormItem(props: FormItemProps) {
   }, [nameProp]);
 
   const { control } = useFormContext();
+  const context = useContext(GFormProviderConfigContext);
 
   const controller = useController({ name, control });
   const error = controller.fieldState?.error?.message;
@@ -213,7 +214,7 @@ export default function FormItem(props: FormItemProps) {
       }}
       key={name}
     >
-      <ModeFormContext.Provider value={{ mode: mode || 'edit' }}>
+      <ModeFormContext.Provider value={{ mode: mode || context?.mode || 'edit' }}>
         <Controller
           name={name}
           control={control}

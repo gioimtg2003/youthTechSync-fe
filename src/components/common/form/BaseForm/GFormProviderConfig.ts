@@ -1,6 +1,6 @@
 import { defaultPrefixCls } from '@/constants';
 import { createContext } from 'react';
-import type { FormConfigProps } from '../type';
+import type { FormConfigProps, FormModeType } from '../type';
 
 export interface ConfigComponentProps {
   text: {};
@@ -34,8 +34,10 @@ const defaultGetPrefixCls = (
 export const GFormProviderConfigContext = createContext<
   {
     layout: FormConfigProps['layout'];
+    mode: FormModeType;
   } & ConfigConsumerProps
 >({
   layout: 'horizontal',
   getPrefixCls: defaultGetPrefixCls,
+  mode: 'edit',
 });

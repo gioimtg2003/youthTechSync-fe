@@ -11,7 +11,7 @@ import {
   type Mode,
   type Resolver,
 } from 'react-hook-form';
-import type { FormConfigProps } from '../type';
+import type { FormConfigProps, FormModeType } from '../type';
 import { GFormProviderConfigContext } from './GFormProviderConfig';
 
 export interface BaseFormProps<Schema extends FieldValues> {
@@ -20,6 +20,8 @@ export interface BaseFormProps<Schema extends FieldValues> {
   onSubmit?: (data: Schema) => void;
   modeValidate?: Mode;
   layout?: FormConfigProps['layout'];
+
+  mode?: FormModeType;
 
   children?:
     | ((props: {
@@ -47,6 +49,7 @@ function Form<Schema extends FieldValues = {}>(
     modeValidate = 'onSubmit',
     children,
     layout = 'horizontal',
+    mode,
   } = props;
   const methods = useForm<Schema>({
     resolver,
@@ -77,7 +80,9 @@ function Form<Schema extends FieldValues = {}>(
   );
 
   return (
-    <GFormProviderConfigContext.Provider value={{ layout }}>
+    <GFormProviderConfigContext.Provider
+      value={{ layout, mode: mode || 'edit' }}
+    >
       <FormProvider {...methods}>
         <form
           onSubmit={methods?.handleSubmit(onSubmit ?? (() => {}))}
