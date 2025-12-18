@@ -1,3 +1,5 @@
+'use client';
+
 import { useRefFunction } from '@/hooks';
 import useDeepCompareMemo from '@/hooks/useDeepCompareMemo';
 import { cn } from '@/lib/utils';
@@ -17,11 +19,22 @@ import FieldSelect from './Select';
 import './style.css';
 import FieldText from './Text';
 
+import { omit } from 'lodash';
 import type {
   FieldFCRenderProps,
   FieldPropsType,
   FieldValueType,
 } from './type';
+
+const IGNORE_FIELD_PROPS = [
+  'onChange',
+  'invalid',
+  'isTouched',
+  'isDirty',
+  'isValidating',
+  'error',
+  'defaultValues',
+];
 
 type RenderFieldProps = Pick<FieldPropsType, 'emptyText'> &
   FieldFCRenderProps & {
@@ -93,7 +106,7 @@ const Field: ForwardRefRenderFunction<CommonRefField, FieldPropsType> = (
     valueType,
     mode,
     {
-      ...rest,
+      ...(omit(rest, IGNORE_FIELD_PROPS) as RenderFieldProps),
       fieldProps,
       adapter: restFieldProps?.adapter || rest?.adapter,
       ref,
