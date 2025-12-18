@@ -3,6 +3,16 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -18,7 +28,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { GetRoleResponse, useQueryGetRole } from '@/services/v1/role/get';
+import { useDisclosure } from '@/hooks';
+import { getQueryClient } from '@/providers/query.provider';
+import { useMutationDeleteRole } from '@/services/v1/role/delete';
+import {
+  ENDPOINT_GET_ROLE,
+  GetRoleResponse,
+  useQueryGetRole,
+} from '@/services/v1/role/get';
 import {
   ColumnDef,
   flexRender,
@@ -28,9 +45,26 @@ import {
 } from '@tanstack/react-table';
 import { Eye, Files, MoreHorizontal, SquarePen, Trash2 } from 'lucide-react';
 import { memo, useState } from 'react';
+import { DefaultValues } from 'react-hook-form';
+import { FormModeType } from '../../form/type';
+import FormActionRole from './FormActionRole';
+import { TRoleSchema } from './zod';
 
 const TableRole = () => {
-  const { data, isPending } = useQueryGetRole();
+  const { data, isPending, isFetching } = useQueryGetRole();
+  const { mutate: deleteRole, isPending: isPendingDelete } =
+    useMutationDeleteRole({});
+  const {
+    isOpen: isOpenActionForm,
+    open: openActionForm,
+    onChange: onChangeActionForm,
+    data: dataActionForm,
+  } = useDisclosure<{
+    mode: FormModeType | 'create';
+    data?: DefaultValues<TRoleSchema>;
+  }>();
+
+  const queryClient = getQueryClient();
 
   const columnsRender: ColumnDef<GetRoleResponse[number]>[] = [
     {
@@ -97,6 +131,11 @@ const TableRole = () => {
       cell: ({ row }) => {
         const role = row?.original;
 
+        const dataAction = {
+          ...role,
+          resources: role?.permissions?.map((p) => p?.resource) || [],
+        };
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -105,15 +144,29 @@ const TableRole = () => {
                 <MoreHorizontal />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              <DropdownMenuLabel className='p-2'>
+            <DropdownMenuContent align='end' className='max-w-[270px]'>
+              <DropdownMenuLabel className='p-2 truncate'>
                 Actions for {role.name}
               </DropdownMenuLabel>
               {/* Additional menu items can be added here */}
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  openActionForm({
+                    mode: 'view',
+                    data: dataAction,
+                  });
+                }}
+              >
                 <Eye /> View Role
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  openActionForm({
+                    mode: 'edit',
+                    data: dataAction,
+                  });
+                }}
+              >
                 <SquarePen /> Edit Role
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -122,13 +175,62 @@ const TableRole = () => {
                 Copy Role to other{' '}
                 <b className='font-medium -ml-1'>Workspace</b>
               </DropdownMenuItem>
-              {/* <DropdownMenuItem>
-                <ArrowLeftRight /> Move Role to other{' '}
-                <b className='font-medium -ml-1'>Workspace</b>
-              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem variant='destructive'>
-                <Trash2 /> Delete Role
+                <Dialog>
+                  <DialogTrigger
+                    asChild
+                    onClick={(e) => {
+                      e?.stopPropagation();
+                      console.log('click');
+                    }}
+                  >
+                    <div className='flex items-center gap-2 w-full'>
+                      <Trash2 className='text-red-500' />
+                      <span>Delete Role</span>
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent
+                    className='!max-w-[425px]'
+                    onClick={(e) => {
+                      e?.stopPropagation();
+                    }}
+                  >
+                    <DialogHeader>
+                      <DialogTitle>Delete role</DialogTitle>
+                      <DialogDescription className=' text-gray-600'>
+                        Are you sure you want to delete the role &quot;
+                        <b>{role?.name}</b>
+                        &quot;? This action cannot be undone.
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant='outline'>Cancel</Button>
+                      </DialogClose>
+                      <Button
+                        loading={isPendingDelete}
+                        onClick={() => {
+                          deleteRole(
+                            {
+                              roleId: role?.id,
+                            },
+                            {
+                              onSuccess: () => {
+                                queryClient?.invalidateQueries({
+                                  queryKey: [ENDPOINT_GET_ROLE],
+                                });
+                              },
+                            }
+                          );
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -136,6 +238,7 @@ const TableRole = () => {
       },
     },
   ];
+
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
     data: data || [],
@@ -147,52 +250,66 @@ const TableRole = () => {
   });
 
   return (
-    <Table>
-      <TableHeader>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map((header) => {
-              return (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              );
-            })}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody isLoading={isPending} columnCount={columnsRender.length}>
-        {table.getRowModel().rows?.length ? (
-          table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              data-state={row.getIsSelected() && 'selected'}
-              className='h-10'
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
+    <>
+      <Dialog open={isOpenActionForm} onOpenChange={onChangeActionForm}>
+        <DialogContent className='p-0 overflow-hidden'>
+          <FormActionRole
+            open={isOpenActionForm}
+            onChange={onChangeActionForm}
+            {...dataActionForm}
+          />
+        </DialogContent>
+      </Dialog>
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
             </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell
-              colSpan={columnsRender?.length}
-              className='h-24 text-center'
-            >
-              No results.
-            </TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+          ))}
+        </TableHeader>
+        <TableBody
+          isLoading={isPending || isPendingDelete || isFetching}
+          columnCount={columnsRender.length}
+        >
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && 'selected'}
+                className='h-10'
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={columnsRender?.length}
+                className='h-24 text-center'
+              >
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   );
 };
 TableRole.displayName = 'TableRole';

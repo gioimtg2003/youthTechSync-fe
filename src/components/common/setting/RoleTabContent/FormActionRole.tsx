@@ -26,16 +26,30 @@ import { getQueryClient } from '@/providers/query.provider';
 import { ENDPOINT_GET_ROLE } from '@/services/v1/role/get';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button as AntdButton } from 'antd';
+import { DefaultValues } from 'react-hook-form';
 import { FormSelect, FormText } from '../../form';
 import Form, { BaseGFormRef } from '../../form/BaseForm';
 import FormList from '../../form/FormList';
 import { FormListActionType } from '../../form/FormList/type';
+import { FormModeType } from '../../form/type';
 export interface FormActionRoleProps {
   open: boolean;
   onChange: (open: boolean) => void;
+  mode?: FormModeType | 'create';
+
+  data?: DefaultValues<TRoleSchema>;
 }
 
-const FormActionRole = ({ open, onChange }: FormActionRoleProps) => {
+const FormActionRole = ({
+  open,
+  onChange,
+  mode = 'create',
+  data: dataProps = {
+    name: '',
+    description: '',
+    permissions: [],
+  },
+}: FormActionRoleProps) => {
   const { data: dataPolicy } = useGetPolicy({ params: {}, enabled: open });
   const { mutate: createRole, isPending: isLoadingCreateRole } =
     useMutationCreateRole({});
@@ -47,6 +61,8 @@ const FormActionRole = ({ open, onChange }: FormActionRoleProps) => {
   const queryClient = getQueryClient();
 
   const onSubmit = (data: TRoleSchema) => {
+    if (mode === 'edit' || mode === 'view') return;
+
     createRole(
       {
         name: data.name,
@@ -64,24 +80,29 @@ const FormActionRole = ({ open, onChange }: FormActionRoleProps) => {
     );
   };
 
+  const title =
+    mode === 'create'
+      ? 'Create new role'
+      : mode === 'edit'
+        ? `Edit ${dataProps?.name ?? 'role'}`
+        : `View ${dataProps?.name ?? 'role'}`;
+
+    
+
   return (
     <div className='max-w-3xl max-h-[515px] overflow-auto p-6 scrollbar-form-role-action'>
       <Form<TRoleSchema>
         onSubmit={onSubmit}
         resolver={zodResolver(RoleSchema)}
-        defaultValues={{
-          name: '',
-          description: '',
-          resources: [],
-          permissions: [],
-        }}
+        mode={mode === 'create' || mode === 'edit' ? 'edit' : 'view'}
+        defaultValues={dataProps}
         ref={formRef}
       >
         {({ methods }) => {
           return (
             <Fragment>
               <DialogHeader>
-                <DialogTitle> Create new role</DialogTitle>
+                <DialogTitle>{title}</DialogTitle>
               </DialogHeader>
               <FormText
                 name='name'
@@ -201,25 +222,27 @@ const FormActionRole = ({ open, onChange }: FormActionRoleProps) => {
                   ))
                 }
               </FormList>
-              <div className='w-full flex justify-end items-center gap-2 mt-4'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <AntdButton
-                      icon={<DeleteOutlined />}
-                      variant='text'
-                      onClick={() => {
-                        formRef.current?.reset();
-                      }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Clear data</p>
-                  </TooltipContent>
-                </Tooltip>
-                <Button type='submit' loading={isLoadingCreateRole}>
-                  Create Role
-                </Button>
-              </div>
+              {(mode === 'create' || mode === 'edit') && (
+                <div className='w-full flex justify-end items-center gap-2 mt-4'>
+                  <Tooltip>
+                    <TooltipTrigger asChild data-slot='tooltip-trigger'>
+                      <AntdButton
+                        icon={<DeleteOutlined />}
+                        variant='text'
+                        onClick={() => {
+                          formRef.current?.reset();
+                        }}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Clear data</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Button type='submit' loading={isLoadingCreateRole}>
+                    {mode === 'edit' ? 'Save Changes' : 'Create Role'}
+                  </Button>
+                </div>
+              )}
             </Fragment>
           );
         }}
