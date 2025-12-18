@@ -17,6 +17,8 @@ import { GFormProviderConfigContext } from './GFormProviderConfig';
 export interface BaseFormProps<Schema extends FieldValues> {
   resolver: Resolver<Schema>;
   defaultValues?: DefaultValues<Schema>;
+  values?: Schema;
+
   onSubmit?: (data: Schema) => void;
   modeValidate?: Mode;
   layout?: FormConfigProps['layout'];
@@ -31,11 +33,13 @@ export interface BaseFormProps<Schema extends FieldValues> {
 }
 
 export type BaseGFormRef<T extends FieldValues> = {
-  reset: () => void;
+  reset: (values?: T) => void;
 
   getValues: () => T;
 
   getValue: (field: FieldPath<T>) => T[keyof T];
+
+  setValues: (values: Partial<T>) => void;
 };
 
 function Form<Schema extends FieldValues = {}>(
@@ -50,22 +54,31 @@ function Form<Schema extends FieldValues = {}>(
     children,
     layout = 'horizontal',
     mode,
+    values,
   } = props;
   const methods = useForm<Schema>({
     resolver,
     defaultValues,
+    values,
     mode: modeValidate,
   });
 
   useImperativeHandle(
     ref,
     () => ({
-      reset: () => {
-        methods.reset();
+      reset: (values) => {
+        methods.reset(values);
       },
       getValues: () => methods.getValues(),
 
       getValue: (field) => methods.getValues(field),
+
+      setValues: (values: Partial<Schema>) => {
+        methods.reset({
+          ...methods.getValues(),
+          ...values,
+        });
+      },
     }),
     []
   );

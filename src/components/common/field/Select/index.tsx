@@ -7,7 +7,8 @@ import { FieldFC } from '../type';
 
 export type SelectFieldProps = {};
 const FieldSelect: FieldFC<{}> = (props, ref) => {
-  const { mode, adapter, render, fieldProps, ...restProps } = props;
+  const { mode, adapter, render, renderFormItem, fieldProps, ...restProps } =
+    props;
   const {
     label: labelField = 'label',
     value: valueField = 'value',
@@ -56,9 +57,20 @@ const FieldSelect: FieldFC<{}> = (props, ref) => {
   }
 
   if (adapter === 'antd') {
-    return <SelectAntd ref={refSelect} {...restProps} {...fieldProps} />;
+    const dom = <SelectAntd ref={refSelect} {...restProps} {...fieldProps} />;
+
+    if (renderFormItem) {
+      return <>{renderFormItem(restProps?.value, { ...fieldProps }, dom)}</>;
+    }
+    return dom;
   }
-  return <Select {...restProps} />;
+
+  const dom = <Select {...restProps} />;
+
+  if (renderFormItem) {
+    return <>{renderFormItem(restProps?.value, { ...fieldProps }, dom)}</>;
+  }
+  return dom;
 };
 FieldSelect.displayName = 'FieldSelect';
 

@@ -32,7 +32,7 @@ const RoleSchema = z.object({
   ),
   resources: z
     .array(z.string())
-    .nonempty('At least one resource must be selected'),
+    .min(1, 'At least one resource must be selected'),
 });
 
 export type TRoleSchema = z.infer<typeof RoleSchema>;

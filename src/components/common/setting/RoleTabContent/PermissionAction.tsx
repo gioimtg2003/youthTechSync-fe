@@ -23,7 +23,7 @@ export interface PermissionActionProps {
 const PermissionAction = (props: PermissionActionProps) => {
   const { resourceId, actions, resource } = props;
 
-  const { setValue, getValues, watch } = useFormContext();
+  const { setValue, watch } = useFormContext();
 
   const actionFormListRef =
     useRef<
@@ -82,39 +82,6 @@ const PermissionAction = (props: PermissionActionProps) => {
               return props.parentElement || document.body;
             },
           }}
-          // placeholder='Select actions'
-          // containerClassName='max-w-[156px]'
-          // options={optionsActions}
-          // maxTagCount={'responsive'}
-          // className='w-full'
-          // mode='multiple'
-          // allowClear
-          // onClear={() => {
-          //   setValue(nameFormList, []);
-          // }}
-          // onDeselect={(v) => {
-          //   const index = actionFields?.findIndex((act) => act?.action === v);
-          //   if (index !== -1) {
-          //     actionFormListRef.current?.remove(index);
-          //   }
-          // }}
-          // onSelect={(v) => {
-          //   console.log('🚀 ~ PermissionAction ~ getValues:', getValues());
-
-          //   if (v === ActionPermission.manage) {
-          //     // remove all other actions if manage is selected
-          //     setValue(nameFormList, [{ action: v }]);
-
-          //     setValue(`permissions.${resourceId}.permissionActions`, [v]);
-          //     return;
-          //   }
-          //   actionFormListRef.current?.add({
-          //     action: v,
-          //   });
-          // }}
-          // getPopupContainer={(props) => {
-          //   return props.parentElement || document.body;
-          // }}
         />
       </div>
 

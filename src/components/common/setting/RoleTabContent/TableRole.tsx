@@ -261,6 +261,7 @@ const TableRole = () => {
         <DialogContent
           className='p-0 overflow-hidden'
           onOpenAutoFocus={(e) => {
+            // Prevents focusing the trigger element when dialog is opened
             e?.preventDefault();
           }}
         >

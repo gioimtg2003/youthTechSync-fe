@@ -3,7 +3,8 @@ import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import type { FieldFC } from '../type';
 
 const FieldText: FieldFC<{}> = (props, ref) => {
-  const { autoFocus, mode, render, fieldProps, ...restProps } = props;
+  const { autoFocus, mode, render, renderFormItem, fieldProps, ...restProps } =
+    props;
 
   const refInput = useRef<HTMLInputElement>(null);
 
@@ -25,7 +26,11 @@ const FieldText: FieldFC<{}> = (props, ref) => {
     return <>{dom}</>;
   }
 
-  const dom = <Input ref={refInput} {...restProps} {...fieldProps} />;
+  const dom = <Input ref={refInput} {...fieldProps} {...restProps} />;
+
+  if (renderFormItem) {
+    return <>{renderFormItem(restProps?.value, { ...fieldProps }, dom)}</>;
+  }
 
   return dom;
 };
