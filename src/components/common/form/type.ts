@@ -73,6 +73,9 @@ export type WrapFormItemProps = {
    * @type HTMLElement['className']
    */
   addonWrapClassName?: HTMLElement['className'];
+
+  rootClassName?: HTMLElement['className'];
+  rootStyle?: React.CSSProperties;
 };
 
 export type FieldProps<K> = {

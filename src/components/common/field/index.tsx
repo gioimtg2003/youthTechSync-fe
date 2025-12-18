@@ -94,7 +94,7 @@ const Field: ForwardRefRenderFunction<CommonRefField, FieldPropsType> = (
     mode,
     {
       ...rest,
-      ...fieldProps,
+      fieldProps,
       adapter: restFieldProps?.adapter || rest?.adapter,
       ref,
       value,

@@ -70,7 +70,7 @@ export default function FormList<Schema>(props: FormListProps<Schema>) {
       {count === 0
         ? emptyList
         : children(
-            resourceFields.map((field, index) => ({
+            resourceFields?.map((field, index) => ({
               value: field as unknown as Schema,
               key: field.id as unknown as number,
               id: field.id,

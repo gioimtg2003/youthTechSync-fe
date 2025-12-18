@@ -1,43 +1,41 @@
 import { isDeepEqualReact } from '@/utils';
 import { memo } from 'react';
-import { Control } from 'react-hook-form';
-import AntdSelectForm from '../../form/select-form-antd';
+import { FormSelect } from '../../form';
 
 export interface ScopeActionItemProps {
   name: string;
-  control: Control<any>;
 }
 const ScopeActionItem = (props: ScopeActionItemProps) => {
-  const { name, control } = props;
+  const { name } = props;
   return (
-    <AntdSelectForm
-      control={control}
+    <FormSelect
       name={name}
-      placeholder='Select scope'
-      containerClassName='max-w-[156px]'
-      options={[]}
-      maxTagCount={'responsive'}
-      className='w-full'
-      mode='multiple'
-      allowClear
-    //   onClear={() => {
-    //     methods.setValue('permissions', []);
-    //   }}
-    //   onDeselect={(v) => {
-    //     const index = resources?.findIndex((rs) => rs === v);
-    //     if (index !== -1) {
-    //       removeResource(index);
-    //     }
-    //   }}
-    //   onSelect={(v) => {
-    //     appendResource({
-    //       actions: [],
-    //       resource: v,
-    //     });
-    //   }}
-      getPopupContainer={(props) => {
-        return props.parentElement || document.body;
+      adapter='antd'
+      fieldProps={{
+        placeholder: 'Select scope',
+        mode: 'multiple',
+        allowClear: true,
+        maxTagCount: 'responsive',
+        className: 'w-[156px]',
+        getPopupContainer: (props) => {
+          return props.parentElement || document.body;
+        },
       }}
+      //   onClear={() => {
+      //     methods.setValue('permissions', []);
+      //   }}
+      //   onDeselect={(v) => {
+      //     const index = resources?.findIndex((rs) => rs === v);
+      //     if (index !== -1) {
+      //       removeResource(index);
+      //     }
+      //   }}
+      //   onSelect={(v) => {
+      //     appendResource({
+      //       actions: [],
+      //       resource: v,
+      //     });
+      //   }}
     />
   );
 };

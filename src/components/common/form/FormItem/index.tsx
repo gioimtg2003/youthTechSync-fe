@@ -80,23 +80,30 @@ const WrapperFormField: React.FC<PropsWithChildren<WrapFormItemProps>> = (
 };
 
 const LayoutFormItem: React.FC<
-  PropsWithChildren<{
-    label?: FormConfigProps['label'];
-    required?: boolean;
-    name: string;
-    tooltip?: ReactNode;
-  }>
-> = ({ children, label, tooltip, name }) => {
+  PropsWithChildren<
+    {
+      label?: FormConfigProps['label'];
+      required?: boolean;
+      name: string;
+      tooltip?: ReactNode;
+    } & Pick<WrapFormItemProps, 'rootClassName' | 'rootStyle'>
+  >
+> = ({ children, label, tooltip, name, rootClassName, rootStyle }) => {
   const { layout, colon } = useContext(FormItemProvider);
   const { layout: layoutForm } = useContext(GFormProviderConfigContext);
 
   const className = useMemo(() => {
-    return cn('g-form-item', {
-      'form-item-horizontal':
-        layout === 'horizontal' && layoutForm !== 'vertical',
-      'form-item-vertical': layout === 'vertical' || layoutForm === 'vertical',
-    });
-  }, [layout, layoutForm]);
+    return cn(
+      'g-form-item',
+      {
+        'form-item-horizontal':
+          layout === 'horizontal' && layoutForm !== 'vertical',
+        'form-item-vertical':
+          layout === 'vertical' || layoutForm === 'vertical',
+      },
+      rootClassName
+    );
+  }, [layout, layoutForm, rootClassName, rootStyle]);
 
   const domLabel = useMemo(
     () =>
@@ -114,7 +121,7 @@ const LayoutFormItem: React.FC<
 
   if (tooltip)
     return (
-      <div className={className}>
+      <div className={className} style={rootStyle}>
         {domLabel && (
           <TooltipProvider>
             <Tooltip delayDuration={100}>
@@ -128,7 +135,7 @@ const LayoutFormItem: React.FC<
     );
 
   return (
-    <div className={className}>
+    <div className={className} style={rootStyle}>
       {domLabel}
       {children}
     </div>
@@ -136,7 +143,15 @@ const LayoutFormItem: React.FC<
 };
 
 export default function FormItem(props: FormItemProps) {
-  const { name: nameProp, label, tooltip, children, mode } = props;
+  const {
+    name: nameProp,
+    label,
+    tooltip,
+    children,
+    mode,
+    rootClassName,
+    rootStyle,
+  } = props;
   const propsWrapperFormItem = useMemo(() => {
     const {
       addonAfter,
@@ -204,7 +219,13 @@ export default function FormItem(props: FormItemProps) {
           control={control}
           render={(props) => {
             return (
-              <LayoutFormItem name={name} label={label} tooltip={tooltip}>
+              <LayoutFormItem
+                name={name}
+                label={label}
+                tooltip={tooltip}
+                rootClassName={rootClassName}
+                rootStyle={rootStyle}
+              >
                 <WrapperFormField {...propsWrapperFormItem}>
                   <div className='form-item-control max-w-full'>
                     {children(props)}

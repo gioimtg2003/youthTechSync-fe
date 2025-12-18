@@ -1,11 +1,14 @@
 import { Select } from '@/components/ui/select';
 import { Select as SelectAntd } from 'antd';
-import { forwardRef } from 'react';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 import { FieldFC } from '../type';
 
 export type SelectFieldProps = {};
-const FieldSelect: FieldFC<{}> = (props) => {
-  const { mode, adapter, ...restProps } = props;
+const FieldSelect: FieldFC<{}> = (props, ref) => {
+  const { mode, adapter, fieldProps, ...restProps } = props;
+  const refSelect = useRef<any>(null);
+
+  useImperativeHandle(ref, () => refSelect?.current, []);
 
   if (mode === 'view') {
     const dom = restProps?.value;
@@ -13,7 +16,7 @@ const FieldSelect: FieldFC<{}> = (props) => {
   }
 
   if (adapter === 'antd') {
-    return <SelectAntd {...restProps} />;
+    return <SelectAntd ref={refSelect} {...restProps} {...fieldProps} />;
   }
   return <Select {...restProps} />;
 };

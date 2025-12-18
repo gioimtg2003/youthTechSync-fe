@@ -12,7 +12,7 @@ export type GFormFieldProps<
 > = GFormFieldItemProps<FiledProps, K> & {
   //TODO: Improve ts
   ref?: React.Ref<any>;
-} & Pick<BaseFieldFCProps, 'adapter' | 'autofocus' | 'mode'> &
+} & Pick<BaseFieldFCProps, 'adapter' | 'autoFocus' | 'mode'> &
   FormConfigProps;
 
 const BaseFormField: React.FC<GFormFieldProps> = (props) => {
@@ -20,7 +20,7 @@ const BaseFormField: React.FC<GFormFieldProps> = (props) => {
     fieldProps,
     valueType,
     adapter = 'shadcn',
-    autofocus,
+    autoFocus,
     ref,
     ...restProps
   } = props;
@@ -28,11 +28,11 @@ const BaseFormField: React.FC<GFormFieldProps> = (props) => {
   const commonFieldProps = useDeepCompareMemo(() => {
     return {
       fieldProps,
-      autofocus,
+      autoFocus,
       ref,
       adapter,
     };
-  }, [fieldProps, autofocus, adapter, ref]);
+  }, [fieldProps, autoFocus, adapter, ref]);
 
   return (
     <FormItem {...restProps}>

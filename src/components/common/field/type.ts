@@ -33,7 +33,7 @@ export type CustomRenderFieldPRopsType = {
 
 export type BaseFieldFCProps = {
   fieldProps?: Record<string, any>;
-  autofocus?: boolean;
+  autoFocus?: boolean;
   mode?: FormModeType;
 
   /**
@@ -64,7 +64,5 @@ export type FieldFC<
   RefType extends CommonRefField = any,
 > = React.ForwardRefRenderFunction<
   RefType,
-  T &
-    Omit<BaseFieldFCProps, 'fieldProps'> &
-    Omit<ControllerRenderProps<any, string>, 'ref'>
+  T & BaseFieldFCProps & Omit<ControllerRenderProps<any, string>, 'ref'>
 >;
