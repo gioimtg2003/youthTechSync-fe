@@ -258,7 +258,12 @@ const TableRole = () => {
   return (
     <>
       <Dialog open={isOpenActionForm} onOpenChange={onChangeActionForm}>
-        <DialogContent className='p-0 overflow-hidden'>
+        <DialogContent
+          className='p-0 overflow-hidden'
+          onOpenAutoFocus={(e) => {
+            e?.preventDefault();
+          }}
+        >
           <FormActionRole
             open={isOpenActionForm}
             onChange={onChangeActionForm}

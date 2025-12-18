@@ -26,11 +26,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useDeepCompareEffect } from '@/hooks';
 import { getQueryClient } from '@/providers/query.provider';
 import { ENDPOINT_GET_ROLE } from '@/services/v1/role/get';
 import { useMutationUpdateRole } from '@/services/v1/role/update';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button as AntdButton } from 'antd';
+import isNull from 'lodash/isNull';
+import isUndefined from 'lodash/isUndefined';
 import { DefaultValues } from 'react-hook-form';
 import { FormSelect, FormText } from '../../form';
 import Form, { BaseGFormRef } from '../../form/BaseForm';
@@ -50,11 +53,7 @@ const FormActionRole = ({
   open,
   onChange,
   mode = 'create',
-  data: dataProps = {
-    name: '',
-    description: '',
-    permissions: [],
-  },
+  data: dataProps,
 }: FormActionRoleProps) => {
   const { data: dataPolicy } = useGetPolicy({ params: {}, enabled: open });
   const { mutate: createRole, isPending: isLoadingCreateRole } =
@@ -118,8 +117,15 @@ const FormActionRole = ({
         onSubmit={onSubmit}
         resolver={zodResolver(RoleSchema)}
         mode={mode === 'create' || mode === 'edit' ? 'edit' : 'view'}
-        defaultValues={dataProps}
         ref={formRef}
+        defaultValues={{
+          name: '',
+          description: '',
+          permissions: [],
+        }}
+        {...((mode === 'edit' || mode === 'view') && {
+          values: dataProps as TRoleSchema,
+        })}
       >
         {({ methods }) => {
           return (
@@ -253,7 +259,12 @@ const FormActionRole = ({
                         icon={<DeleteOutlined />}
                         variant='text'
                         onClick={() => {
-                          formRef.current?.reset();
+                          formRef.current?.reset({
+                            name: '',
+                            description: '',
+                            permissions: [],
+                            resources: [],
+                          });
                         }}
                       />
                     </TooltipTrigger>
