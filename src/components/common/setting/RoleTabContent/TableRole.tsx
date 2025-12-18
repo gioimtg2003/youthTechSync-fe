@@ -134,6 +134,11 @@ const TableRole = () => {
         const dataAction = {
           ...role,
           resources: role?.permissions?.map((p) => p?.resource) || [],
+          permissions:
+            role?.permissions?.map((p) => ({
+              ...p,
+              permissionActions: p?.actions?.map((a) => a?.action),
+            })) || [],
         };
 
         return (
@@ -153,7 +158,7 @@ const TableRole = () => {
                 onClick={() => {
                   openActionForm({
                     mode: 'view',
-                    data: dataAction,
+                    data: dataAction as DefaultValues<TRoleSchema>,
                   });
                 }}
               >
@@ -163,7 +168,7 @@ const TableRole = () => {
                 onClick={() => {
                   openActionForm({
                     mode: 'edit',
-                    data: dataAction,
+                    data: dataAction as DefaultValues<TRoleSchema>,
                   });
                 }}
               >
