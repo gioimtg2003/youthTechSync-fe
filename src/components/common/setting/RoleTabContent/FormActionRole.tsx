@@ -3,7 +3,11 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { SYSTEM_RESOURCE, SYSTEM_RESOURCE_LABEL_MAPPING } from '@/constants';
+import {
+  DEFAULT_ID,
+  SYSTEM_RESOURCE,
+  SYSTEM_RESOURCE_LABEL_MAPPING,
+} from '@/constants';
 import { cn } from '@/lib/utils';
 import { useGetPolicy } from '@/services/v1/policy';
 import {
@@ -24,6 +28,7 @@ import {
 } from '@/components/ui/tooltip';
 import { getQueryClient } from '@/providers/query.provider';
 import { ENDPOINT_GET_ROLE } from '@/services/v1/role/get';
+import { useMutationUpdateRole } from '@/services/v1/role/update';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button as AntdButton } from 'antd';
 import { DefaultValues } from 'react-hook-form';
@@ -37,9 +42,10 @@ export interface FormActionRoleProps {
   onChange: (open: boolean) => void;
   mode?: FormModeType | 'create';
 
-  data?: DefaultValues<TRoleSchema>;
+  data?: DefaultValues<TRoleSchema> & { id?: number };
 }
 
+//TODO: improve performance when open form with mode edit
 const FormActionRole = ({
   open,
   onChange,
@@ -53,6 +59,8 @@ const FormActionRole = ({
   const { data: dataPolicy } = useGetPolicy({ params: {}, enabled: open });
   const { mutate: createRole, isPending: isLoadingCreateRole } =
     useMutationCreateRole({});
+  const { mutate: updateRole, isPending: isLoadingUpdateRole } =
+    useMutationUpdateRole({});
 
   const actionFormListRef =
     useRef<FormListActionType<TRoleSchema['permissions'][number]>>(undefined);
@@ -61,23 +69,40 @@ const FormActionRole = ({
   const queryClient = getQueryClient();
 
   const onSubmit = (data: TRoleSchema) => {
-    if (mode === 'edit' || mode === 'view') return;
-
-    createRole(
-      {
-        name: data.name,
-        description: data?.description,
-        permissions: (data?.permissions ??
-          []) as CreateRoleRequest['permissions'],
-      },
-      {
-        onSuccess: () => {
-          formRef.current?.reset();
-          queryClient?.invalidateQueries({ queryKey: [ENDPOINT_GET_ROLE] });
-          onChange(false);
+    if (mode === 'edit') {
+      updateRole(
+        {
+          id: dataProps?.id ?? DEFAULT_ID,
+          name: data.name,
+          description: data?.description,
+          permissions: (data?.permissions ??
+            []) as CreateRoleRequest['permissions'],
         },
-      }
-    );
+        {
+          onSuccess: () => {
+            formRef.current?.reset();
+            queryClient?.invalidateQueries({ queryKey: [ENDPOINT_GET_ROLE] });
+            onChange(false);
+          },
+        }
+      );
+    }
+    if (mode === 'create')
+      createRole(
+        {
+          name: data.name,
+          description: data?.description,
+          permissions: (data?.permissions ??
+            []) as CreateRoleRequest['permissions'],
+        },
+        {
+          onSuccess: () => {
+            formRef.current?.reset();
+            queryClient?.invalidateQueries({ queryKey: [ENDPOINT_GET_ROLE] });
+            onChange(false);
+          },
+        }
+      );
   };
 
   const title =
@@ -236,7 +261,10 @@ const FormActionRole = ({
                       <p>Clear data</p>
                     </TooltipContent>
                   </Tooltip>
-                  <Button type='submit' loading={isLoadingCreateRole}>
+                  <Button
+                    type='submit'
+                    loading={isLoadingCreateRole || isLoadingUpdateRole}
+                  >
                     {mode === 'edit' ? 'Save Changes' : 'Create Role'}
                   </Button>
                 </div>

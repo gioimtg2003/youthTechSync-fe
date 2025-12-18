@@ -17,7 +17,9 @@ const RoleSchema = z.object({
         z
           .object({
             action: z.string({ required_error: 'Action is required' }),
-            scope: z.string().optional(),
+            scope: z
+              .union([z.array(z.number()), z.undefined(), z.null()])
+              .optional(),
           })
           .optional()
       ),

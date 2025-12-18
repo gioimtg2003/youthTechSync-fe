@@ -67,8 +67,6 @@ const PermissionAction = (props: PermissionActionProps) => {
               }
             },
             onSelect(v) {
-              console.log('🚀 ~ PermissionAction ~ getValues:', getValues());
-
               if (v === ActionPermission.manage) {
                 // remove all other actions if manage is selected
                 setValue(nameFormList, [{ action: v }]);

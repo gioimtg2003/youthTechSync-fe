@@ -43,6 +43,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import omit from 'lodash/omit';
 import { Eye, Files, MoreHorizontal, SquarePen, Trash2 } from 'lucide-react';
 import { memo, useState } from 'react';
 import { DefaultValues } from 'react-hook-form';
@@ -132,11 +133,11 @@ const TableRole = () => {
         const role = row?.original;
 
         const dataAction = {
-          ...role,
+          ...omit(role, ['permission']),
           resources: role?.permissions?.map((p) => p?.resource) || [],
           permissions:
             role?.permissions?.map((p) => ({
-              ...p,
+              ...omit(p, []),
               permissionActions: p?.actions?.map((a) => a?.action),
             })) || [],
         };
