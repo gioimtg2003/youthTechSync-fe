@@ -26,14 +26,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useDeepCompareEffect } from '@/hooks';
 import { getQueryClient } from '@/providers/query.provider';
 import { ENDPOINT_GET_ROLE } from '@/services/v1/role/get';
 import { useMutationUpdateRole } from '@/services/v1/role/update';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button as AntdButton } from 'antd';
-import isNull from 'lodash/isNull';
-import isUndefined from 'lodash/isUndefined';
 import { DefaultValues } from 'react-hook-form';
 import { FormSelect, FormText } from '../../form';
 import Form, { BaseGFormRef } from '../../form/BaseForm';
@@ -154,6 +151,24 @@ const FormActionRole = ({
                 <FormSelect
                   name={'resources'}
                   adapter='antd'
+                  render={(values, { optionsValueEnum }) => {
+                    if (!values) return null;
+
+                    const labels = (
+                      Array.isArray(values) ? values : [values]
+                    ).map((v) => optionsValueEnum?.get(v) || v);
+
+                    return labels?.map((label, index) => (
+                      <Badge
+                        key={index}
+                        title={label}
+                        color='blue'
+                        className='mr-1 font-light'
+                      >
+                        {label}
+                      </Badge>
+                    ));
+                  }}
                   fieldProps={{
                     placeholder: 'Select resource',
                     options: (dataPolicy?.resource ?? [])?.map((r) => ({

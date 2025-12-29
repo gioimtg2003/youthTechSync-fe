@@ -51,7 +51,12 @@ const FieldSelect: FieldFC<{}> = (props, ref) => {
       objectToMap(optionsValueEnum)
     );
 
-    if (render) return <>{render(restProps?.value, { ...fieldProps }, dom)}</>;
+    if (render)
+      return (
+        <>
+          {render(restProps?.value, { ...fieldProps, optionsValueEnum }, dom)}
+        </>
+      );
 
     return <>{dom}</>;
   }

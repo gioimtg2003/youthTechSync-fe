@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge';
 import {
   ACTION_PERMISSION_ICON_MAPPING,
   ACTION_PERMISSION_LABEL_MAPPING,
@@ -50,6 +51,24 @@ const PermissionAction = (props: PermissionActionProps) => {
         <FormSelect
           name={`permissions.${resourceId}.permissionActions`}
           adapter='antd'
+          render={(values, { optionsValueEnum }) => {
+            if (!values) return null;
+
+            const labels = (Array.isArray(values) ? values : [values]).map(
+              (v) => optionsValueEnum?.get(v) || v
+            );
+
+            return labels?.map((label, index) => (
+              <Badge
+                key={index}
+                title={label}
+                className='mr-1 font-light'
+                variant='outline'
+              >
+                {label}
+              </Badge>
+            ));
+          }}
           fieldProps={{
             placeholder: 'Select actions',
             className: 'w-[156px]',

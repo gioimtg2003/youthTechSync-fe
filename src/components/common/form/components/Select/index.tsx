@@ -1,8 +1,11 @@
 import { SelectProps } from 'antd';
-import FormField, { GFormFieldProps } from '../../Field';
 import { forwardRef, ForwardRefRenderFunction } from 'react';
+import FormField, { GFormFieldProps } from '../../Field';
 
-export type FormSelectProps = GFormFieldProps<SelectProps, {}>;
+export type FormSelectProps = GFormFieldProps<
+  SelectProps & { optionsValueEnum?: Map<string, any> },
+  {}
+>;
 
 const FormSelect: ForwardRefRenderFunction<{}, FormSelectProps> = (
   { fieldProps, valueType = 'select', ...restProps },
